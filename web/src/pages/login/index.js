@@ -1,35 +1,79 @@
-import { observer } from 'mobx-react'
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
 
 import "./style.scss"
+import { 
+    onEmailChanged, 
+    onPasswordChanged, 
+    onLoginClicked
+} from '../../redux/actions/loginAction'
 
 
 class Login extends Component {
     render() {
+        const { 
+            onEmailChanged, 
+            onPasswordChanged, 
+            onLoginClicked,
+            email, 
+            password,
+            emailNotExist,
+            loginFailedMsg
+        } = this.props
         return (
-            <div id="register-container" className="d-flex align-items-center flex-column">
-                <div>{JSON.stringify(store.register)}</div>
+            <div id="login-container" className="d-flex align-items-center flex-column">
                 <h2>Login</h2>
-                <form onSubmit={(e) => {e.preventDefault()}}>
+                <form onSubmit={(e) => {e.preventDefault(); onLoginClicked()}}>
                     <div className="form-group">
                         <label for="exampleInputEmail1">Email address</label>
-                        <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"/>
+                        <input 
+                            type="email" 
+                            className="form-control" 
+                            id="exampleInputEmail1" 
+                            aria-describedby="emailHelp"
+                            onChange={onEmailChanged}
+                            required/>
                     </div>
                     <div className="form-group">
                         <label for="exampleInputPassword1">Password</label>
-                        <input type="password" className="form-control" id="exampleInputPassword1"/>
+                        <input 
+                            type="password" 
+                            className="form-control" 
+                            id="exampleInputPassword1"
+                            onChange={onPasswordChanged}
+                            required/>
                     </div>
-                    <div className="form-group">
-                        <label for="exampleInputPassword1">Confirm Password</label>
-                        <input type="password" className="form-control" id="exampleInputPassword1"/>
+                    <div id="login-error-msg-container" className="text-center text-danger font-weight-bold">
+                        { emailNotExist && <p id="login-email-exist">{emailNotExist}</p>}
+                        { loginFailedMsg && <p id="login-email-exist">{loginFailedMsg}</p>}
                     </div>
                     <div className="text-center">
-                        <button type="submit" className="btn btn-primary">Login</button>
+                        <button 
+                            type="submit" 
+                            className="btn btn-primary"
+                            disabled={!email || !password}>
+                                Login
+                        </button>
                     </div>
                 </form>
+                <p id="sign-up-content">No account yet? <a id="sign-up" href="/login" className="font-weight-bold">Sign up for free!</a></p>
             </div>
         )
     }
 }
 
-export default Login
+const mapStateToProps = state => ({
+    email: state.login.email,
+    password: state.login.password,
+    isPasswordMatch: state.login.isPasswordMatch,
+    emailNotExist: state.login.emailNotExist,
+    loginFailedMsg: state.login.loginFailedMsg
+})
+  
+const mapDispatchToProps = dispatch => ({
+    onEmailChanged: (e) => dispatch(onEmailChanged(e.target.value)),
+    onPasswordChanged: (e) => dispatch(onPasswordChanged(e.target.value)),
+    onLoginClicked: () => dispatch(onLoginClicked())
+})
+  
+export default connect(mapStateToProps, mapDispatchToProps)(Login)
