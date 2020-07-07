@@ -2,16 +2,14 @@ import { observer } from 'mobx-react'
 import React, { Component } from 'react';
 
 import "./style.scss"
-import store from '../../store';
 
 
-@observer
-class Register extends Component {
+class Login extends Component {
     render() {
         return (
             <div id="register-container" className="d-flex align-items-center flex-column">
                 <div>{JSON.stringify(store.register)}</div>
-                <h2>Register</h2>
+                <h2>Login</h2>
                 <form onSubmit={(e) => {e.preventDefault()}}>
                     <div className="form-group">
                         <label for="exampleInputEmail1">Email address</label>
@@ -26,7 +24,7 @@ class Register extends Component {
                         <input type="password" className="form-control" id="exampleInputPassword1"/>
                     </div>
                     <div className="text-center">
-                        <button type="submit" className="btn btn-primary">Register</button>
+                        <button type="submit" className="btn btn-primary">Login</button>
                     </div>
                 </form>
             </div>
@@ -34,4 +32,4 @@ class Register extends Component {
     }
 }
 
-export default Register
+export default Login
