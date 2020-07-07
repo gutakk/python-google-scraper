@@ -11,3 +11,15 @@ services:
     ports:
       - "3000:3000"
     stdin_open: true
+
+  db:
+    container_name: db
+    build:
+      context: ./
+      dockerfile: ./docker/db/Dockerfile
+    environment:
+      POSTGRES_USER: nimble
+      POSTGRES_PASSWORD: nimble-test
+      POSTGRES_DB: nimble
+    ports:
+      - "5432:5432"
