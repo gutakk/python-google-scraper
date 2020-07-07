@@ -1,0 +1,13 @@
+version: "3.3"
+services:
+  web:
+    container_name: web
+    build:
+      context: ./
+      dockerfile: ./docker/web/Dockerfile
+    volumes:
+      - "./web/src:/web/src"
+      - "./web/public:/web/public"
+    ports:
+      - "3000:3000"
+    stdin_open: true
