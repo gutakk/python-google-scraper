@@ -2,15 +2,12 @@ import { observer } from 'mobx-react'
 import React, { Component } from 'react';
 
 import "./style.scss"
-import store from '../../store';
 
 
-@observer
 class Register extends Component {
     render() {
         return (
             <div id="register-container" className="d-flex align-items-center flex-column">
-                <div>{JSON.stringify(store.register)}</div>
                 <h2>Register</h2>
                 <form onSubmit={(e) => {e.preventDefault()}}>
                     <div className="form-group">
