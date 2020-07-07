@@ -56,7 +56,7 @@ class Login extends Component {
                         </button>
                     </div>
                 </form>
-                <p id="sign-up-content">No account yet? <a id="sign-up" href="/login" className="font-weight-bold">Sign up for free!</a></p>
+                <p id="sign-up-content">No account yet? <a id="sign-up" href="/register" className="font-weight-bold">Sign up for free!</a></p>
             </div>
         )
     }

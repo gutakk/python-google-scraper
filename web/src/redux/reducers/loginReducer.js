@@ -25,7 +25,8 @@ export default (state = {
         case LOGIN_CLICK:
             return {
                 ...state,
-                emailNotExist: ""
+                emailNotExist: "",
+                loginFailedMsg: ""
             }
         case LOGIN_FAILED:
             return {

@@ -12,11 +12,8 @@ export default (state = {
     email: "",
     password: "",
     confirmPassword: "",
-    termCheck: false,
-    promotionCheck: false,
     isPasswordMatch: true,
     emailExist: "",
-    registerSuccessMsg: "",
     registerFailedMsg: ""
 }, action) => {
     switch (action.type) {
@@ -39,7 +36,8 @@ export default (state = {
             return {
                 ...state,
                 isPasswordMatch: true,
-                emailExist: ""
+                emailExist: "",
+                registerFailedMsg: ""
             }
         case PASSWORD_NOT_MATCH:
             return {
