@@ -12,6 +12,24 @@ services:
       - "3000:3000"
     stdin_open: true
 
+  backend:
+    container_name: backend
+    build:
+      context: ./
+      dockerfile: ./docker/backend/Dockerfile
+    volumes:
+      - "./backend:/usr/src"
+    environment:
+      POSTGRES_USER: nimble
+      POSTGRES_PASSWORD: nimble-test
+      POSTGRES_DB: nimble
+      POSTGRES_HOST: db
+      JWT_SECRET: nimble-secret
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+
   db:
     container_name: db
     build:
