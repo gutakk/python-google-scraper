@@ -50,6 +50,7 @@ export const onRegisterClicked = () => (dispatch, getState) => {
                     type: REGISTERED,
                     payload: "Register successfully" 
                 })
+                window.location.href = "/"
             }
             else if(result.statusCode === 400) {
                 dispatch({ 
@@ -65,13 +66,4 @@ export const onRegisterClicked = () => (dispatch, getState) => {
             }
         }))
     }
-}
-
-export const closeModalAndRedirect = () => dispatch => {
-    dispatch({ type: CLOSE_MODAL_AND_REDIRECT })
-    window.location.href = "/"
-}
-
-export const closeModal = () => dispatch => {
-    dispatch({ type: CLOSE_MODAL })
 }
