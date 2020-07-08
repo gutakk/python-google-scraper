@@ -2,12 +2,19 @@ import os
 import time
 
 import jwt
+
 import psycopg2
+from celery import Celery
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 app = Flask(__name__)
+app.config.from_object("config")
+app.secret_key = app.config['SECRET_KEY']
 CORS(app)
+
+client = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+client.conf.update(app.config)
 
 pg_host = os.environ['POSTGRES_HOST']
 pg_user = os.environ['POSTGRES_USER']
@@ -67,6 +74,18 @@ def login():
         finally:
             cur.close()
             cnx.close()
+
+
+@client.task
+def print_test_celery(data):
+    print(data)
+
+
+@app.route('/test-celery', methods=['POST'])
+def test_celery():
+    if request.method == 'POST':
+        print_test_celery.apply_async(args=["hello celery"])
+        return "hello celery", 200
 
 
 def generate_jwt(email):

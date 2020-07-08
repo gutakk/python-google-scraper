@@ -41,3 +41,25 @@ services:
       POSTGRES_DB: nimble
     ports:
       - "5432:5432"
+
+  redis:
+    container_name: redis
+    image: "redis:5.0.4-stretch"
+    restart: "no"
+    stop_grace_period: "3s"
+
+  worker:
+    container_name: worker
+    build:
+      context: ./
+      dockerfile: ./docker/worker/Dockerfile
+    volumes:
+      - "./backend:/usr/src"
+    environment:
+      POSTGRES_USER: nimble
+      POSTGRES_PASSWORD: nimble-test
+      POSTGRES_DB: nimble
+      POSTGRES_HOST: db
+      JWT_SECRET: nimble-secret
+    depends_on:
+      - db
