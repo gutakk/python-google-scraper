@@ -1,6 +1,6 @@
 async function uploadKeywords(keywords) {
     const hostname = window.location.hostname
-    const url = "http://" + hostname + ":5000/test-celery"
+    const url = "http://" + hostname + ":5000/upload-keywords"
     const body = {
         keywords: keywords
     }

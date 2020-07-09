@@ -4,9 +4,11 @@ import time
 import jwt
 
 import psycopg2
+from bs4 import BeautifulSoup
 from celery import Celery
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from selenium import webdriver
 
 app = Flask(__name__)
 app.config.from_object("config")
@@ -77,15 +79,25 @@ def login():
 
 
 @client.task
-def print_test_celery(data):
-    print(data)
+def scrape_data(data):
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--disable-gpu')
+    driver = webdriver.Chrome(chrome_options=chrome_options)
+    driver.get("https://www.google.com/search?q=lenovo")
+    content = driver.page_source
+    soup = BeautifulSoup(content, "html.parser")
+    results = soup.find(id="result-stats")
+    print(results.text)
 
 
-@app.route('/test-celery', methods=['POST'])
-def test_celery():
+@app.route('/upload-keywords', methods=['POST'])
+def process_keywords():
     if request.method == 'POST':
-        print_test_celery.apply_async(args=["hello celery"])
-        return "hello celery", 200
+        request_body = request.json
+        scrape_data.apply_async(args=[request_body['keywords']])
+        return "Upload Completed", 200
 
 
 def generate_jwt(email):
