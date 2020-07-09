@@ -3,6 +3,7 @@ import React from 'react';
 
 import Login from './pages/login'
 import Register from './pages/register'
+import UploadCSV from './pages/uploadCSV'
 
 
 function App() {
@@ -12,7 +13,7 @@ function App() {
       <Switch>
           <Route path='/register'>{token ? <Redirect to=''/> : <Register/>}</Route>
           <Route path='/login'>{token ? <Redirect to=''/> : <Login/>}</Route>
-          <Route path='/'><Login/></Route>
+          <Route path='/'><UploadCSV/></Route>
           <Redirect from='*' to='/' />
       </Switch>
     </div>
