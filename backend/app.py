@@ -79,16 +79,17 @@ def login():
 
 
 @client.task
-def scrape_data(data):
+def scrape_data_from_google(keyword):
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--headless')
-    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument('--disable-dev-shm-usage')
     driver = webdriver.Chrome(chrome_options=chrome_options)
-    driver.get("https://www.google.com/search?q=lenovo")
+    driver.get(f"https://www.google.com/search?q={keyword}")
     content = driver.page_source
     soup = BeautifulSoup(content, "html.parser")
     results = soup.find(id="result-stats")
+    print(keyword)
     print(results.text)
 
 
@@ -96,7 +97,8 @@ def scrape_data(data):
 def process_keywords():
     if request.method == 'POST':
         request_body = request.json
-        scrape_data.apply_async(args=[request_body['keywords']])
+        for keyword in request_body["keywords"]:
+            scrape_data_from_google.apply_async(args=[keyword])
         return "Upload Completed", 200
 
 

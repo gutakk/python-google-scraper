@@ -54,7 +54,7 @@ services:
     build:
       context: ./
       dockerfile: ./docker/backend/Dockerfile
-    command: "celery worker -A app.client --loglevel=info"
+    command: "celery worker -A app.client --loglevel=info --concurrency=5"
     volumes:
       - "./backend:/usr/src"
     environment:
