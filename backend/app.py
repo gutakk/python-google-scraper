@@ -1,5 +1,6 @@
 import os
 import time
+import uuid
 
 import jwt
 
@@ -79,7 +80,7 @@ def login():
 
 
 @client.task
-def scrape_data_from_google(keyword):
+def scrape_data_from_google(file_id, keyword):
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--headless')
@@ -88,17 +89,74 @@ def scrape_data_from_google(keyword):
     driver.get(f"https://www.google.com/search?q={keyword}")
     content = driver.page_source
     soup = BeautifulSoup(content, "html.parser")
+
+    total_adword = count_adword(soup)
+    total_link = count_link(soup)
+    total_search_result = get_total_search_result(soup)
+
+    cnx = init_cnx()
+    cur = cnx.cursor()
+    try:
+        cur.execute("""
+            INSERT INTO data (file_id, keyword, total_adword, total_link, total_search_result, html_code)
+            VALUES (%s, %s, %s, %s, %s, %s);
+        """, [file_id, keyword, total_adword, total_link, total_search_result, soup.prettify()])
+        cnx.commit()
+    except Exception as e:
+        cnx.rollback()
+        raise(e)
+    finally:
+        cur.close()
+        cnx.close()
+
+
+def count_adword(soup):
+    results = soup.find_all("div", class_="ad_cclk")
+    return len(results)
+
+
+def count_link(soup):
+    results = soup.find_all(href=True)
+    return len(results)
+
+
+def get_total_search_result(soup):
     results = soup.find(id="result-stats")
-    print(keyword)
-    print(results.text)
+    return results.text
 
 
-@app.route('/upload-keywords', methods=['POST'])
-def process_keywords():
-    if request.method == 'POST':
+@app.route('/csv', methods=['GET', 'POST'])
+def process_csv():
+    if request.method == 'GET':
+        cnx = init_cnx()
+        cur = cnx.cursor()
+        try:
+            file_id = str(uuid.uuid4())
+            cur.execute("SELECT file_id, filename, keywords, created FROM file;")
+            result = cur.fetchall()
+            return jsonify(result), 200
+        except Exception as e:
+            cnx.rollback()
+            raise(e)
+        finally:
+            cur.close()
+            cnx.close()
+    elif request.method == 'POST':
         request_body = request.json
+        cnx = init_cnx()
+        cur = cnx.cursor()
+        try:
+            file_id = str(uuid.uuid4())
+            cur.execute("INSERT INTO file (file_id, filename, keywords) VALUES (%s, %s, %s)", [file_id, request_body["filename"], len(request_body["keywords"])])
+            cnx.commit()
+        except Exception as e:
+            cnx.rollback()
+            raise(e)
+        finally:
+            cur.close()
+            cnx.close()
         for keyword in request_body["keywords"]:
-            scrape_data_from_google.apply_async(args=[keyword])
+            scrape_data_from_google.apply_async(args=[file_id, keyword])
         return "Upload Completed", 200
 
 

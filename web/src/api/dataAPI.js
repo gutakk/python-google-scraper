@@ -1,7 +1,8 @@
-async function uploadKeywords(keywords) {
+async function uploadKeywords(filename, keywords) {
     const hostname = window.location.hostname
-    const url = "http://" + hostname + ":5000/upload-keywords"
+    const url = "http://" + hostname + ":5000/csv"
     const body = {
+        filename: filename,
         keywords: keywords
     }
     const config = {
