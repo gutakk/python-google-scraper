@@ -1,6 +1,8 @@
-import { UPLOAD_CLICK, UPLOADING, UPLOADED } from '../actions/uploadCSVAction'
+import { CSV_FETCHED, UPLOAD_CLICK, UPLOADING, UPLOADED } from '../actions/uploadCSVAction'
   
-export default (state = {}, action) => {
+export default (state = {
+    csvList: []
+}, action) => {
     switch (action.type) {
         case UPLOAD_CLICK:
             return {
@@ -13,6 +15,11 @@ export default (state = {}, action) => {
         case UPLOADED:
             return {
                 ...state,
+            }
+        case CSV_FETCHED:
+            return {
+                ...state,
+                csvList: action.payload
             }
         default:
             return state

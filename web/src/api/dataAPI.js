@@ -21,6 +21,15 @@ async function uploadKeywords(filename, keywords) {
     }
 }
 
+async function fetchCSV() {
+    const hostname = window.location.hostname
+    const url = "http://" + hostname + ":5000/csv"
+    const response = await fetch(url)
+    const data = await response.json()
+    return data
+}
+
 export {
-    uploadKeywords
+    uploadKeywords,
+    fetchCSV
 }

@@ -132,7 +132,7 @@ def process_csv():
         cur = cnx.cursor()
         try:
             file_id = str(uuid.uuid4())
-            cur.execute("SELECT file_id, filename, keywords, created FROM file;")
+            cur.execute("SELECT file_id, filename, keywords, created FROM file ORDER BY created DESC;")
             result = cur.fetchall()
             return jsonify(result), 200
         except Exception as e:
