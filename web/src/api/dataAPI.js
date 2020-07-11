@@ -29,7 +29,16 @@ async function fetchCSV() {
     return data
 }
 
+async function fetchDataReport(fileId) {
+    const hostname = window.location.hostname
+    const url = "http://" + hostname + ":5000/data-report/" + fileId
+    const response = await fetch(url)
+    const data = await response.json()
+    return data
+}
+
 export {
     uploadKeywords,
-    fetchCSV
+    fetchCSV,
+    fetchDataReport
 }

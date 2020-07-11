@@ -160,6 +160,43 @@ def process_csv():
         return "Upload Completed", 200
 
 
+@app.route('/data-report/<file_id>', methods=['GET'])
+def data_report(file_id):
+    if request.method == 'GET':
+        cnx = init_cnx()
+        cur = cnx.cursor()
+        try:
+            app.logger.info(file_id)
+            cur.execute("SELECT keyword, total_adword, total_link, total_search_result, file_id FROM data WHERE file_id=%s ORDER BY keyword ASC;", [file_id])
+            result = cur.fetchall()
+            return jsonify(result), 200
+        except Exception as e:
+            cnx.rollback()
+            raise(e)
+        finally:
+            cur.close()
+            cnx.close()
+
+
+@app.route('/html-code/<file_id>/<keyword>', methods=['GET'])
+def html_code(file_id, keyword):
+    if request.method == 'GET':
+        cnx = init_cnx()
+        cur = cnx.cursor()
+        try:
+            app.logger.info(file_id)
+            cur.execute("SELECT html_code FROM data WHERE file_id=%s AND keyword=%s;", [file_id, keyword])
+            result = cur.fetchone()
+            app.logger.info(jsonify(result[0]))
+            return jsonify(result[0]), 200
+        except Exception as e:
+            cnx.rollback()
+            raise(e)
+        finally:
+            cur.close()
+            cnx.close()
+
+
 def generate_jwt(email):
     return jwt.encode({'email': email}, os.environ['JWT_SECRET'], algorithm='HS256')
 

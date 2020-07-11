@@ -34,8 +34,12 @@ class UploadCSV extends Component {
                         <tbody>
                             {csvList.map(csv => {
                                 return (
-                                    <tr id={csv.fileId} key={csv.fileId} className="text-center">
-                                        <td><button id={csv.fileId}><i className="fa fa-eye"></i></button></td>
+                                    <tr key={csv.fileId} className="text-center">
+                                        <td>
+                                            <a href={`/data-report/${csv.fileId}`}>
+                                                <button><i className="fa fa-eye"></i></button>
+                                            </a>
+                                        </td>
                                         <td>{csv.filename}</td>
                                         <td>{csv.keywords}</td>
                                         <td>{csv.created}</td>
