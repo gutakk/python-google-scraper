@@ -1,25 +1,21 @@
-import { CSV_FETCHED, UPLOAD_CLICK, UPLOADING, UPLOADED } from '../actions/uploadCSVAction'
+import { CSV_FETCHED, FETCHING_CSV } from '../actions/uploadCSVAction'
   
 export default (state = {
-    csvList: []
+    choseFile: null,
+    csvList: [],
+    isFetching: false
 }, action) => {
     switch (action.type) {
-        case UPLOAD_CLICK:
-            return {
-                ...state
-            }
-        case UPLOADING:
+        case FETCHING_CSV:
             return {
                 ...state,
-            }
-        case UPLOADED:
-            return {
-                ...state,
+                isFetching: true
             }
         case CSV_FETCHED:
             return {
                 ...state,
-                csvList: action.payload
+                csvList: action.payload,
+                isFetching: false
             }
         default:
             return state

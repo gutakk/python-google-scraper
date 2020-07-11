@@ -2,31 +2,31 @@ import { uploadKeywords, fetchCSV } from '../../api/dataAPI'
 
 export const CSV_FETCHED = 'uploadCSV/CSV_FETCHED'
 export const FETCHING_CSV = 'uploadCSV/FETCHING_CSV'
-export const UPLOAD_CLICK = 'uploadCSV/UPLOAD_CLICK'
 export const UPLOADING = 'uploadCSV/UPLOADING'
 export const UPLOADED = 'uploadCSV/UPLOADED'
 
-export const onUploadClicked = (file) => dispatch => {
-    dispatch({ type: UPLOAD_CLICK })
+export const onUpload = (file) => dispatch => {
     dispatch({ type: UPLOADING })
 
     let fr = new FileReader();
         fr.onload = (e) => {
             let keywords = (e.target.result).replace(/\n/g, ",").replace(/,,/g, ",").split(",")
             keywords.pop()
-            console.log(keywords)
             uploadKeywords(file.name, keywords).then((result => {
                 if(result.statusCode === 200) {
                     dispatch({ type: UPLOADED })
                 }
-                window.location.href = "/csv"
+                window.location.href = "/"
             }))
         };
         fr.readAsText(file);
 }
 
 export const fetchCSVAction = () => dispatch => {
-    dispatch({ type: FETCHING_CSV })
+    dispatch({ 
+        type: FETCHING_CSV,
+        payload: true
+     })
     fetchCSV().then(result => {
         let csvList = []
         result.map(csv => {

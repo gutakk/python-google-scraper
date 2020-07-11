@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import "./style.scss"
 import { 
-    onUploadClicked,
+    onUpload,
     fetchCSVAction
 } from '../../redux/actions/uploadCSVAction'
 
@@ -15,13 +15,22 @@ class UploadCSV extends Component {
 
     render() {
         const { 
-            onUploadClicked,
-            csvList
+            onUpload,
+            fetchCSVAction,
+            csvList,
+            isFetching
         } = this.props
         return (
-            <div id="upload-csv-container">
-                <input type="file" onChange={onUploadClicked}/>
-                <div id="uploaded-csv-container" className="d-flex justify-content-center">
+            <div id="upload-csv-container" className="d-flex flex-column align-items-center">
+                <div className="custom-file">
+                    <input type="file" className="custom-file-input" id="customFile" onChange={onUpload}/>
+                    <label className="custom-file-label">Choose file</label>
+                </div>
+                <div id="refresh-btn-container"><button className="btn btn-primary" onClick={fetchCSVAction}>Refresh</button></div>
+                {
+                    isFetching ?
+                    <div className="spinner"><i className="fa fa-circle-o-notch fa-spin display-1"></i></div>
+                    :
                     <table className="table table-bordered">
                         <thead>
                             <tr className="text-center">
@@ -53,19 +62,20 @@ class UploadCSV extends Component {
                             })}
                         </tbody>
                     </table>
-                </div>
+                }
             </div>
         )
     }
 }
 
 const mapStateToProps = state => ({
-    csvList: state.uploadCSV.csvList
+    csvList: state.uploadCSV.csvList,
+    isFetching: state.uploadCSV.isFetching
 })
   
 const mapDispatchToProps = dispatch => ({
-    onUploadClicked: (e) => dispatch(onUploadClicked(e.target.files[0])),
-    fetchCSVAction: () => dispatch(fetchCSVAction())
+    onUpload: (e) => dispatch(onUpload(e.target.files[0])),
+    fetchCSVAction: () => dispatch(fetchCSVAction()),
 })
   
 export default connect(mapStateToProps, mapDispatchToProps)(UploadCSV)

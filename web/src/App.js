@@ -14,8 +14,8 @@ function App() {
       <Switch>
           <Route path='/register'>{token ? <Redirect to=''/> : <Register/>}</Route>
           <Route path='/login'>{token ? <Redirect to=''/> : <Login/>}</Route>
-          <Route path='/csv'><UploadCSV/></Route>
           <Route path='/data-report'><DataReport/></Route>
+          <Route path='/'><UploadCSV/></Route>
           <Redirect from='*' to='/' />
       </Switch>
     </div>
