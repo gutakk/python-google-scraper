@@ -31,6 +31,7 @@ class UploadCSV extends Component {
                     isFetching ?
                     <div className="spinner"><i className="fa fa-circle-o-notch fa-spin display-1"></i></div>
                     :
+                    csvList.length > 0 ?
                     <table className="table table-bordered">
                         <thead>
                             <tr className="text-center">
@@ -62,6 +63,8 @@ class UploadCSV extends Component {
                             })}
                         </tbody>
                     </table>
+                    :
+                    <h2 className="text-muted">NO UPLOADED FILES</h2>
                 }
             </div>
         )
