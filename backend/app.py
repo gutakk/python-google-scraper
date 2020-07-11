@@ -125,7 +125,9 @@ def count_link(soup):
 
 def get_total_search_result(soup):
     results = soup.find(id="result-stats")
-    return results.text
+    if results:
+        return results.text
+    return
 
 
 @app.route('/csv', methods=['GET', 'POST'])
@@ -216,7 +218,7 @@ def generate_jwt(email):
 
 def validate_jwt(token):
     try:
-        jwt.decode(token, os.environ['JWT_SECRET'], algorithms=["HS256"], verify=True)
+        return jwt.decode(token, os.environ['JWT_SECRET'], algorithms=["HS256"], verify=True)
     except Exception as e:
         return 401
 

@@ -1,6 +1,6 @@
 FROM python
 
-ENV PYTHONPATH="usr/src"
+ENV PYTHONPATH="/usr/src"
 
 WORKDIR /usr/src
 

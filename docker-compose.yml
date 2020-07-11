@@ -26,7 +26,6 @@ services:
       POSTGRES_PASSWORD: nimble-test
       POSTGRES_DB: nimble
       POSTGRES_HOST: db
-      PYTHONPATH: /usr/src
     ports:
       - "5000:5000"
     depends_on:
