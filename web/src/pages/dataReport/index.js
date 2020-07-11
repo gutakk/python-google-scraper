@@ -16,7 +16,9 @@ class DataReport extends Component {
         const { dataReports } = this.props
         return (
             <div id="data-report-container" className="d-flex flex-column align-items-center">
-                <table className="table table-bordered">
+                {
+                    dataReports.length > 0 ? 
+                    <table className="table table-bordered">
                     <thead>
                         <tr className="text-center">
                         <th scope="col">Keyword</th>
@@ -44,6 +46,9 @@ class DataReport extends Component {
                         })}
                     </tbody>
                 </table>
+                :
+                <h2>Data Not Found</h2>
+                }
             </div>
         )
     }
