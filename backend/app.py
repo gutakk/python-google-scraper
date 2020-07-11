@@ -81,20 +81,21 @@ def login():
 
 @client.task
 def scrape_data_from_google(file_id, keyword):
-    chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument('--no-sandbox')
-    chrome_options.add_argument('--headless')
-    chrome_options.add_argument('--disable-dev-shm-usage')
-    driver = webdriver.Chrome(chrome_options=chrome_options)
-    driver.get(f"https://www.google.com/search?q={keyword}")
-    content = driver.page_source
-    soup = BeautifulSoup(content, "html.parser")
+    try:
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--disable-dev-shm-usage')
+        driver = webdriver.Chrome(chrome_options=chrome_options)
+        driver.get(f"https://www.google.com/search?q={keyword}")
+        content = driver.page_source
+        soup = BeautifulSoup(content, "html.parser")
 
-    total_adword = count_adword(soup)
-    total_link = count_link(soup)
-    total_search_result = get_total_search_result(soup)
-
-    driver.close()
+        total_adword = count_adword(soup)
+        total_link = count_link(soup)
+        total_search_result = get_total_search_result(soup)
+    finally:
+        driver.close()
 
     cnx = init_cnx()
     cur = cnx.cursor()
