@@ -6,3 +6,4 @@ celery==4.4.0
 redis==3.3.11
 beautifulsoup4
 selenium
+pytest

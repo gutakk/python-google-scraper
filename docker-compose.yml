@@ -21,11 +21,12 @@ services:
     volumes:
       - "./backend:/usr/src"
     environment:
+      JWT_SECRET: nimble-secret
       POSTGRES_USER: nimble
       POSTGRES_PASSWORD: nimble-test
       POSTGRES_DB: nimble
       POSTGRES_HOST: db
-      JWT_SECRET: nimble-secret
+      PYTHONPATH: /usr/src
     ports:
       - "5000:5000"
     depends_on:
@@ -58,10 +59,10 @@ services:
     volumes:
       - "./backend:/usr/src"
     environment:
+      JWT_SECRET: nimble-secret
       POSTGRES_USER: nimble
       POSTGRES_PASSWORD: nimble-test
       POSTGRES_DB: nimble
       POSTGRES_HOST: db
-      JWT_SECRET: nimble-secret
     depends_on:
       - db
