@@ -153,6 +153,8 @@ def process_csv():
             cur.close()
             cnx.close()
     elif request.method == 'POST':
+        if validate_jwt(request.headers.get('Authorization')) == 401:
+            return "Unauthorized", 401
         request_body = request.json
         cnx = init_cnx()
         cur = cnx.cursor()
@@ -210,6 +212,13 @@ def html_code(file_id, keyword):
 
 def generate_jwt(email):
     return jwt.encode({'email': email}, os.environ['JWT_SECRET'], algorithm='HS256')
+
+
+def validate_jwt(token):
+    try:
+        jwt.decode(token, os.environ['JWT_SECRET'], algorithms=["HS256"], verify=True)
+    except Exception as e:
+        return 401
 
 
 if __name__ == '__main__':

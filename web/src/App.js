@@ -8,18 +8,18 @@ import UploadCSV from './pages/uploadCSV'
 
 
 function App() {
-  const token = localStorage.getItem('token')
-  return (
-    <div className="App">
-      <Switch>
-          <Route path='/register'>{token ? <Redirect to=''/> : <Register/>}</Route>
-          <Route path='/login'>{token ? <Redirect to=''/> : <Login/>}</Route>
-          <Route path='/data-report'><DataReport/></Route>
-          <Route path='/'><UploadCSV/></Route>
-          <Redirect from='*' to='/' />
-      </Switch>
-    </div>
-  );
+    const token = localStorage.getItem('token')
+    return (
+        <div className="App">
+            <Switch>
+                <Route path='/register'>{!token ? <Register/> : <Redirect to=''/> }</Route>
+                <Route path='/login'>{!token ? <Login/> : <Redirect to=''/>}</Route>
+                <Route path='/data-report'><DataReport/></Route>
+                <Route path='/'><UploadCSV/></Route>
+                <Redirect from='*' to='/' />
+            </Switch>
+        </div>
+    );
 }
 
 export default App;

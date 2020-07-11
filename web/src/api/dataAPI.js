@@ -7,6 +7,7 @@ async function uploadKeywords(filename, keywords) {
     }
     const config = {
         headers: {
+            "Authorization": localStorage.getItem('token'),
             "Content-Type": "application/json"
         },
         body: JSON.stringify(body),
