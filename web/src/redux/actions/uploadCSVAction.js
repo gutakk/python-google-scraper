@@ -19,6 +19,7 @@ export const onUploadClicked = (file) => dispatch => {
                 if(result.statusCode === 200) {
                     dispatch({ type: UPLOADED })
                 }
+                window.location.href = "/csv"
             }))
         };
         fr.readAsText(file);
@@ -33,7 +34,8 @@ export const fetchCSVAction = () => dispatch => {
                 fileId: csv[0],
                 filename: csv[1],
                 keywords: csv[2],
-                created: csv[3]
+                created: csv[3],
+                status: csv[4]
             })
         })
         dispatch({

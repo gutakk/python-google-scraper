@@ -36,9 +36,14 @@ class UploadCSV extends Component {
                                 return (
                                     <tr key={csv.fileId} className="text-center">
                                         <td>
-                                            <a href={`/data-report/${csv.fileId}`}>
-                                                <button><i className="fa fa-eye"></i></button>
-                                            </a>
+                                            {
+                                                csv.status ?
+                                                <a href={`/data-report/${csv.fileId}`}>
+                                                    <button><i className="fa fa-eye"></i></button>
+                                                </a>
+                                                :
+                                                <button className="btn btn-primary" disabled>PROCESSING</button>
+                                            }
                                         </td>
                                         <td>{csv.filename}</td>
                                         <td>{csv.keywords}</td>

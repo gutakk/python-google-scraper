@@ -94,6 +94,8 @@ def scrape_data_from_google(file_id, keyword):
     total_link = count_link(soup)
     total_search_result = get_total_search_result(soup)
 
+    driver.close()
+
     cnx = init_cnx()
     cur = cnx.cursor()
     try:
@@ -132,7 +134,15 @@ def process_csv():
         cur = cnx.cursor()
         try:
             file_id = str(uuid.uuid4())
-            cur.execute("SELECT file_id, filename, keywords, created FROM file ORDER BY created DESC;")
+            cur.execute("""
+                SELECT 
+                    file_id, 
+                    filename, 
+                    keywords, 
+                    created,
+                    (SELECT COUNT(*) >= f.keywords FROM data WHERE file_id=f.file_id) AS status
+                FROM file f ORDER BY created DESC;
+            """)
             result = cur.fetchall()
             return jsonify(result), 200
         except Exception as e:
