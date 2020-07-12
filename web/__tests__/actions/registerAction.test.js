@@ -1,7 +1,6 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk'
 import * as actions from '../../src/redux/actions/registerAction'
-import fetchMock, { mock } from 'fetch-mock'
 
 const middlewares = [thunk]
 const mockStore = configureStore(middlewares);
@@ -65,24 +64,6 @@ describe("clear action", () => {
                     email: "test@email.com",
                     password: "1234",
                     confirmPassword: "123"
-                }
-            })
-            store.dispatch(actions.onRegisterClicked());
-            expect(store.getActions()).toEqual(expectedActions);
-        })
-
-        test("Password and Confirm password match", () => {
-            
-            const expectedActions = [
-                {"type": "register/REGISTER_CLICK"},
-                {"type": "register/REGISTERING"},
-                {"type": "register/PASSWORD_NOT_MATCH"}
-            ]
-            store = mockStore({
-                register: {
-                    email: "test@email.com",
-                    password: "1234",
-                    confirmPassword: "1234"
                 }
             })
             store.dispatch(actions.onRegisterClicked());

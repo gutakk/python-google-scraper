@@ -1,7 +1,6 @@
 import { CSV_FETCHED, FETCHING_CSV } from '../actions/uploadCSVAction'
   
 export default (state = {
-    choseFile: null,
     csvList: [],
     isFetching: false
 }, action) => {
