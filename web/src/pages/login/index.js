@@ -25,7 +25,7 @@ class Login extends Component {
                 <h2>Login</h2>
                 <form onSubmit={(e) => {e.preventDefault(); onLoginClicked()}}>
                     <div className="form-group">
-                        <label for="exampleInputEmail1">Email address</label>
+                        <label>Email address</label>
                         <input 
                             type="email" 
                             className="form-control" 
@@ -35,7 +35,7 @@ class Login extends Component {
                             required/>
                     </div>
                     <div className="form-group">
-                        <label for="exampleInputPassword1">Password</label>
+                        <label>Password</label>
                         <input 
                             type="password" 
                             className="form-control" 

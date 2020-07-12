@@ -29,7 +29,7 @@ class Register extends Component {
                 <h2>Register</h2>
                 <form onSubmit={(e) => {e.preventDefault(); onRegisterClicked()}}>
                     <div className="form-group">
-                        <label for="exampleInputEmail1">Email address</label>
+                        <label>Email address</label>
                         <input 
                             type="email" 
                             className="form-control" 
@@ -39,7 +39,7 @@ class Register extends Component {
                             required/>
                     </div>
                     <div className="form-group">
-                        <label for="exampleInputPassword1">Password</label>
+                        <label>Password</label>
                         <input 
                             type="password" 
                             className="form-control" 
@@ -48,7 +48,7 @@ class Register extends Component {
                             required/>
                     </div>
                     <div className="form-group">
-                        <label for="exampleInputPassword1">Confirm Password</label>
+                        <label>Confirm Password</label>
                         <input 
                             type="password" 
                             className="form-control" 

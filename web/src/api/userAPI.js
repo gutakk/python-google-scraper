@@ -1,6 +1,5 @@
 async function register(email, password) {
-    const hostname = window.location.hostname
-    const url = "http://" + hostname + ":5000/user"
+    const url = `${process.env.REACT_APP_BACKEND_HOST}:${process.env.REACT_APP_BACKEND_PORT}/user`
     const body = {
         email: email,
         password: password
@@ -22,8 +21,7 @@ async function register(email, password) {
 }
 
 async function login(email, password) {
-    const hostname = window.location.hostname
-    const url = "http://" + hostname + ":5000/login"
+    const url = `${process.env.REACT_APP_BACKEND_HOST}:${process.env.REACT_APP_BACKEND_PORT}/login`
     const body = {
         email: email,
         password: password

@@ -1,6 +1,5 @@
 async function uploadKeywords(filename, keywords) {
-    const hostname = window.location.hostname
-    const url = "http://" + hostname + ":5000/csv"
+    const url = `${process.env.REACT_APP_BACKEND_HOST}:${process.env.REACT_APP_BACKEND_PORT}/csv`
     const body = {
         filename: filename,
         keywords: keywords
@@ -23,16 +22,14 @@ async function uploadKeywords(filename, keywords) {
 }
 
 async function fetchCSV() {
-    const hostname = window.location.hostname
-    const url = "http://" + hostname + ":5000/csv"
+    const url = `${process.env.REACT_APP_BACKEND_HOST}:${process.env.REACT_APP_BACKEND_PORT}/csv`
     const response = await fetch(url)
     const data = await response.json()
     return data
 }
 
 async function fetchDataReport(fileId) {
-    const hostname = window.location.hostname
-    const url = "http://" + hostname + ":5000/data-report/" + fileId
+    const url = `${process.env.REACT_APP_BACKEND_HOST}:${process.env.REACT_APP_BACKEND_PORT}/data-report/${fileId}`
     const response = await fetch(url)
     const data = await response.json()
     return data
