@@ -21,6 +21,7 @@ services:
     volumes:
       - "./backend:/usr/src"
     environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
       JWT_SECRET: nimble-secret
       POSTGRES_USER: nimble
       POSTGRES_PASSWORD: nimble-test
@@ -54,10 +55,11 @@ services:
     build:
       context: ./
       dockerfile: ./docker/backend/Dockerfile
-    command: "celery worker -A app.client --loglevel=info --concurrency=10"
+    command: "celery worker -A worker.client --loglevel=info --concurrency=10"
     volumes:
       - "./backend:/usr/src"
     environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
       JWT_SECRET: nimble-secret
       POSTGRES_USER: nimble
       POSTGRES_PASSWORD: nimble-test

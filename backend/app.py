@@ -1,33 +1,12 @@
-import os
 import time
 import uuid
 
-import jwt
-
-import psycopg2
-from bs4 import BeautifulSoup
-from celery import Celery
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from selenium import webdriver
+from utils import app, generate_jwt, init_cnx, validate_jwt
+from worker import scrape_data_from_google
 
-app = Flask(__name__)
-app.config.from_object("config")
-app.secret_key = app.config['SECRET_KEY']
 CORS(app)
-
-client = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-client.conf.update(app.config)
-
-pg_host = os.environ['POSTGRES_HOST']
-pg_user = os.environ['POSTGRES_USER']
-pg_password = os.environ['POSTGRES_PASSWORD']
-pg_db = os.environ['POSTGRES_DB']
-
-
-def init_cnx():
-    return psycopg2.connect(dbname=pg_db, user=pg_user, password=pg_password, host=pg_host)
-    
 
 @app.route('/')
 def index():
@@ -77,57 +56,6 @@ def login():
         finally:
             cur.close()
             cnx.close()
-
-
-@client.task
-def scrape_data_from_google(file_id, keyword):
-    try:
-        chrome_options = webdriver.ChromeOptions()
-        chrome_options.add_argument('--no-sandbox')
-        chrome_options.add_argument('--headless')
-        chrome_options.add_argument('--disable-dev-shm-usage')
-        driver = webdriver.Chrome(chrome_options=chrome_options)
-        driver.get(f"https://www.google.com/search?q={keyword}")
-        content = driver.page_source
-        soup = BeautifulSoup(content, "html.parser")
-
-        total_adword = count_adword(soup)
-        total_link = count_link(soup)
-        total_search_result = get_total_search_result(soup)
-    finally:
-        driver.close()
-
-    cnx = init_cnx()
-    cur = cnx.cursor()
-    try:
-        cur.execute("""
-            INSERT INTO data (file_id, keyword, total_adword, total_link, total_search_result, html_code)
-            VALUES (%s, %s, %s, %s, %s, %s);
-        """, [file_id, keyword, total_adword, total_link, total_search_result, soup.prettify()])
-        cnx.commit()
-    except Exception as e:
-        cnx.rollback()
-        raise(e)
-    finally:
-        cur.close()
-        cnx.close()
-
-
-def count_adword(soup):
-    results = soup.find_all("div", class_="ad_cclk")
-    return len(results)
-
-
-def count_link(soup):
-    results = soup.find_all(href=True)
-    return len(results)
-
-
-def get_total_search_result(soup):
-    results = soup.find(id="result-stats")
-    if results:
-        return results.text
-    return
 
 
 @app.route('/csv', methods=['GET', 'POST'])
@@ -210,17 +138,6 @@ def html_code(file_id, keyword):
         finally:
             cur.close()
             cnx.close()
-
-
-def generate_jwt(email):
-    return jwt.encode({'email': email}, os.environ['JWT_SECRET'], algorithm='HS256')
-
-
-def validate_jwt(token):
-    try:
-        return jwt.decode(token, os.environ['JWT_SECRET'], algorithms=["HS256"], verify=True)
-    except Exception as e:
-        return 401
 
 
 if __name__ == '__main__':
