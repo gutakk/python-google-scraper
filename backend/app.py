@@ -10,7 +10,11 @@ CORS(app)
 
 @app.route('/')
 def index():
-    return 'Index Page'
+    routes = {}
+    for r in app.url_map._rules:
+        routes[r.endpoint] = r.rule
+
+    return jsonify(routes)
 
 
 @app.route('/user', methods=['POST'])
