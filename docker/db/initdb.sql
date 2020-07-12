@@ -25,3 +25,7 @@ CREATE TABLE data (
     created TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     PRIMARY KEY(file_id, keyword)
 );
+
+CREATE INDEX ON users (email, password);
+CREATE INDEX ON file (created);
+CREATE INDEX ON data (keyword);
