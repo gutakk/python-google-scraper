@@ -12,7 +12,7 @@ export const onUpload = (file) => (dispatch, getState) => {
     const endpoints = getState().app.endpoints
     dispatch({ type: UPLOADING })
 
-    let fr = new FileReader();
+    let fr = new FileReader()
         fr.onload = (e) => {
             const keywords = (e.target.result).replace(/\n/g, ",").split(",")
             const noEmptyValueKeywords = (keywords.filter(keyword => keyword.length > 0))
@@ -34,7 +34,7 @@ export const onUpload = (file) => (dispatch, getState) => {
                 }))
             }
         }
-        fr.readAsText(file);
+        fr.readAsText(file)
 }
 
 export const fetchCSVAction = () => (dispatch, getState) => {

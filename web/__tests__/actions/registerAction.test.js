@@ -64,6 +64,9 @@ describe("clear action", () => {
                     email: "test@email.com",
                     password: "1234",
                     confirmPassword: "123"
+                },
+                app: {
+                    endpoints: {}
                 }
             })
             store.dispatch(actions.onRegisterClicked());
