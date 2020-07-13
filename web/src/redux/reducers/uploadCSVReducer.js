@@ -2,7 +2,7 @@ import { CSV_FETCHED, FETCHING_CSV } from '../actions/uploadCSVAction'
   
 export default (state = {
     csvList: [],
-    isFetching: false
+    isFetching: true
 }, action) => {
     switch (action.type) {
         case FETCHING_CSV:

@@ -4,10 +4,11 @@ export const DATA_REPORT_FETCHED = 'dataReport/DATA_REPORT_FETCHED'
 export const FETCHING_DATA_REPORT = 'dataReport/FETCHING_DATA_REPORT'
 
 
-export const fetchDataAction = () => dispatch => {
+export const fetchDataAction = () => (dispatch, getState) => {
+    const endpoints = getState().app.endpoints
     dispatch({ type: FETCHING_DATA_REPORT })
     const fileId = window.location.pathname.split("/")[2]
-    fetchDataReport(fileId).then(result => {
+    fetchDataReport(endpoints["data_report"], fileId).then(result => {
         let dataReports = []
         result.map(data => {
             dataReports.push({

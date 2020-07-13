@@ -1,7 +1,7 @@
 import { ENDPOINT_FETCHED, FETCHING_ENDPOINTS } from '../actions/appAction'
   
 export default (state = {
-    endpoints: {},
+    endpoints: null,
     isFetchingEndpoints: false
 }, action) => {
     switch (action.type) {

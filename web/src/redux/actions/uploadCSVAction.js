@@ -6,17 +6,18 @@ export const UPLOADING = 'uploadCSV/UPLOADING'
 export const UPLOADED = 'uploadCSV/UPLOADED'
 export const UPLOAD_UNAUTHORIZED = 'uploadCSV/UPLOAD_UNAUTHORIZED'
 
-export const onUpload = (file) => dispatch => {
+export const onUpload = (file) => (dispatch, getState) => {
+    const endpoints = getState().app.endpoints
     dispatch({ type: UPLOADING })
 
     let fr = new FileReader();
         fr.onload = (e) => {
             const keywords = (e.target.result).replace(/\n/g, ",").split(",")
             const filterdKeywords = keywords.filter(keyword => keyword.length > 0)
-            uploadKeywords(file.name, filterdKeywords).then((result => {
+            uploadKeywords(endpoints["process_csv"], file.name, filterdKeywords).then((result => {
                 if(result.statusCode === 200) {
                     dispatch({ type: UPLOADED })
-                    window.location.href = "/"
+                    dispatch(fetchCSVAction())
                 }
                 else if(result.statusCode === 401) {
                     dispatch({ type: UPLOAD_UNAUTHORIZED })
@@ -28,12 +29,13 @@ export const onUpload = (file) => dispatch => {
         fr.readAsText(file);
 }
 
-export const fetchCSVAction = () => dispatch => {
+export const fetchCSVAction = () => (dispatch, getState) => {
+    const endpoints = getState().app.endpoints
     dispatch({ 
         type: FETCHING_CSV,
         payload: true
      })
-    fetchCSV().then(result => {
+    fetchCSV(endpoints["process_csv"]).then(result => {
         let csvList = []
         result.map(csv => {
             csvList.push({

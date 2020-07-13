@@ -1,5 +1,5 @@
-async function uploadKeywords(filename, keywords) {
-    const url = `${process.env.REACT_APP_BACKEND_HOST}:${process.env.REACT_APP_BACKEND_PORT}/csv`
+async function uploadKeywords(path, filename, keywords) {
+    const url = `${process.env.REACT_APP_BACKEND_HOST}:${process.env.REACT_APP_BACKEND_PORT}${path}`
     const body = {
         filename: filename,
         keywords: keywords
@@ -21,15 +21,16 @@ async function uploadKeywords(filename, keywords) {
     }
 }
 
-async function fetchCSV() {
-    const url = `${process.env.REACT_APP_BACKEND_HOST}:${process.env.REACT_APP_BACKEND_PORT}/csv`
+async function fetchCSV(path) {
+    const url = `${process.env.REACT_APP_BACKEND_HOST}:${process.env.REACT_APP_BACKEND_PORT}${path}`
     const response = await fetch(url)
     const data = await response.json()
     return data
 }
 
-async function fetchDataReport(fileId) {
-    const url = `${process.env.REACT_APP_BACKEND_HOST}:${process.env.REACT_APP_BACKEND_PORT}/data-report/${fileId}`
+async function fetchDataReport(path, fileId) {
+    const replacedPath = path.replace("<file_id>", fileId)
+    const url = `${process.env.REACT_APP_BACKEND_HOST}:${process.env.REACT_APP_BACKEND_PORT}${replacedPath}`
     const response = await fetch(url)
     const data = await response.json()
     return data

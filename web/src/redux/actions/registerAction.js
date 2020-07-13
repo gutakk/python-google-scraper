@@ -34,6 +34,7 @@ export const onConfirmPasswordChanged = (password) => dispatch => {
 }
 
 export const onRegisterClicked = () => (dispatch, getState) => {
+    const endpoints = getState().app.endpoints
     const email = getState().register.email
     const password = getState().register.password
     const confirmPassword = getState().register.confirmPassword
@@ -43,7 +44,7 @@ export const onRegisterClicked = () => (dispatch, getState) => {
         dispatch({ type: PASSWORD_NOT_MATCH })
     }
     else {
-        register(email, password).then((result => {
+        register(endpoints["user"], email, password).then((result => {
             if(result.statusCode === 201) {
                 localStorage.setItem("token", result.message)
                 dispatch({ 

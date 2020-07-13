@@ -9,7 +9,8 @@ import {
 
 class DataReport extends Component {
     componentDidMount() {
-        this.props.fetchDataAction()
+        if(!this.props.isFetchingEndpoints)
+            this.props.fetchDataAction()
     }
 
     render() {
@@ -55,7 +56,8 @@ class DataReport extends Component {
 }
 
 const mapStateToProps = state => ({
-    dataReports: state.dataReport.dataReports
+    dataReports: state.dataReport.dataReports,
+    isFetchingEndpoints: state.app.isFetchingEndpoints
 })
   
 const mapDispatchToProps = dispatch => ({

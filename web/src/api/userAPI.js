@@ -1,5 +1,5 @@
-async function register(email, password) {
-    const url = `${process.env.REACT_APP_BACKEND_HOST}:${process.env.REACT_APP_BACKEND_PORT}/user`
+async function register(path, email, password) {
+    const url = `${process.env.REACT_APP_BACKEND_HOST}:${process.env.REACT_APP_BACKEND_PORT}${path}`
     const body = {
         email: email,
         password: password
@@ -20,8 +20,8 @@ async function register(email, password) {
     }
 }
 
-async function login(email, password) {
-    const url = `${process.env.REACT_APP_BACKEND_HOST}:${process.env.REACT_APP_BACKEND_PORT}/login`
+async function login(path, email, password) {
+    const url = `${process.env.REACT_APP_BACKEND_HOST}:${process.env.REACT_APP_BACKEND_PORT}${path}`
     const body = {
         email: email,
         password: password

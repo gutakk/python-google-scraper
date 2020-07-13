@@ -24,12 +24,13 @@ export const onPasswordChanged = (password) => dispatch => {
 }
 
 export const onLoginClicked = () => (dispatch, getState) => {
+    const endpoints = getState().app.endpoints
     const email = getState().login.email
     const password = getState().login.password
     dispatch({ type: LOGIN_CLICK })
     dispatch({ type: LOGGING_IN })
     
-    login(email, password).then((result => {
+    login(endpoints["login"], email, password).then((result => {
         if(result.statusCode === 200) {
             localStorage.setItem("token", result.message)
             dispatch({ type: LOGGED_IN })

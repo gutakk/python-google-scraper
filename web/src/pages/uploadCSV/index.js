@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-
+import { Link } from 'react-router-dom'
 import "./style.scss"
 import { 
     onUpload,
@@ -10,7 +10,8 @@ import {
 
 class UploadCSV extends Component {
     componentDidMount() {
-        this.props.fetchCSVAction()
+        if (!this.props.isFetchingEndpoints)
+            this.props.fetchCSVAction()
     }
 
     render() {
@@ -48,9 +49,9 @@ class UploadCSV extends Component {
                                         <td>
                                             {
                                                 csv.status ?
-                                                <a href={`/data-report/${csv.fileId}`}>
+                                                <Link to={`/data-report/${csv.fileId}`}>
                                                     <button><i className="fa fa-eye"></i></button>
-                                                </a>
+                                                </Link>
                                                 :
                                                 <button className="btn btn-primary" disabled>PROCESSING</button>
                                             }
@@ -73,7 +74,8 @@ class UploadCSV extends Component {
 
 const mapStateToProps = state => ({
     csvList: state.uploadCSV.csvList,
-    isFetching: state.uploadCSV.isFetching
+    isFetching: state.uploadCSV.isFetching,
+    isFetchingEndpoints: state.app.isFetchingEndpoints
 })
   
 const mapDispatchToProps = dispatch => ({

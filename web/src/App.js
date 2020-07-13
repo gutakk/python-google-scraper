@@ -12,28 +12,33 @@ import {
 
 
 class App extends React.Component {
-    componentDidMount() {
-        this.props.fetchEndpoint()
+    constructor(props) {
+        super(props)
+        props.fetchEndpoint()
     }
 
     render() {
         const token = localStorage.getItem('token')
+        const { isFetchingEndpoints } = this.props
         return (
             <div className="App">
-                <Switch>
-                    <Route path='/register'>{!token ? <Register/> : <Redirect to=''/> }</Route>
-                    <Route path='/login'>{!token ? <Login/> : <Redirect to=''/>}</Route>
-                    <Route path='/data-report'><DataReport/></Route>
-                    <Route path='/'><UploadCSV/></Route>
-                    <Redirect from='*' to='/' />
-                </Switch>
+                {
+                    !isFetchingEndpoints && 
+                    <Switch>
+                        <Route path='/register'>{!token ? <Register/> : <Redirect to=''/> }</Route>
+                        <Route path='/login'>{!token ? <Login/> : <Redirect to=''/>}</Route>
+                        <Route path='/data-report'><DataReport/></Route>
+                        <Route path='/'><UploadCSV/></Route>
+                        <Redirect from='*' to='/' />
+                    </Switch>
+                }
             </div>
         )
     }
 }
 
 const mapStateToProps = state => ({
-    endpoints: state.app.endpoints
+    isFetchingEndpoints: state.app.isFetchingEndpoints
 })
   
 const mapDispatchToProps = dispatch => ({

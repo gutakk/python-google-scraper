@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 import "./style.scss"
 import { 
@@ -56,7 +57,7 @@ class Login extends Component {
                         </button>
                     </div>
                 </form>
-                <p id="sign-up-content">No account yet? <a id="sign-up" href="/register" className="font-weight-bold">Sign up for free!</a></p>
+                <p id="sign-up-content">No account yet? <Link id="sign-up" to="/register" className="font-weight-bold">Sign up for free!</Link></p>
             </div>
         )
     }
