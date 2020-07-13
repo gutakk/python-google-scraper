@@ -23,7 +23,7 @@ CREATE TABLE data (
     total_search_result TEXT,
     html_code TEXT,
     created TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    PRIMARY KEY(file_id)
+    PRIMARY KEY(file_id, keyword)
 );
 
 CREATE INDEX ON users (email, password);
