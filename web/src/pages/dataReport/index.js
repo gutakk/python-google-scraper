@@ -37,7 +37,7 @@ class DataReport extends Component {
                                     <td>{dataReport.totalLinks}</td>
                                     <td>{dataReport.totalSearchResults}</td>
                                     <td>
-                                        <a target="_blank" href={`http://${window.location.hostname}:5000/html-code/${dataReport.fileId}/${dataReport.keyword}`}>
+                                        <a target="_blank" href={`${process.env.REACT_APP_BACKEND_HOST}:${process.env.REACT_APP_BACKEND_PORT}/html-code/${dataReport.fileId}/${dataReport.keyword}`}>
                                             <button><i className="fa fa-eye"></i></button>
                                         </a>
                                     </td>
