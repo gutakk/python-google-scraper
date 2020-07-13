@@ -102,8 +102,8 @@ def process_csv():
         finally:
             cur.close()
             cnx.close()
-        for keyword in request_body["keywords"]:
-            scrape_data_from_google.apply_async(args=[file_id, keyword])
+        # for keyword in request_body["keywords"]:
+        scrape_data_from_google.apply_async(args=[file_id, "Nike"])
         return "Upload Completed", 200
 
 
@@ -113,7 +113,6 @@ def data_report(file_id):
         cnx = init_cnx()
         cur = cnx.cursor()
         try:
-            app.logger.info(file_id)
             cur.execute("SELECT keyword, total_adword, total_link, total_search_result, file_id FROM data WHERE file_id=%s ORDER BY keyword ASC;", [file_id])
             result = cur.fetchall()
             return jsonify(result), 200

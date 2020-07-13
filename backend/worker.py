@@ -3,6 +3,7 @@ import os
 from bs4 import BeautifulSoup
 from celery import Celery
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 from utils import app, init_cnx
 
 client = Celery(app.name, broker=os.environ["CELERY_BROKER_URL"])
@@ -16,9 +17,20 @@ def scrape_data_from_google(file_id, keyword):
         chrome_options.add_argument('--headless')
         chrome_options.add_argument('--disable-dev-shm-usage')
         driver = webdriver.Chrome(chrome_options=chrome_options)
-        driver.get(f"https://www.google.com/search?q={keyword}")
+        driver.header_overrides = {
+            "Referer": "https://www.google.com/",
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36"
+        }
+        driver.get("https://www.google.com/")
+
+        search = driver.find_element_by_name("q")
+        search.send_keys(keyword)
+        search.send_keys(Keys.RETURN)
+
         content = driver.page_source
         soup = BeautifulSoup(content, "html.parser")
+
+        print(soup)
 
         total_adword = count_adword(soup)
         total_link = count_link(soup)
