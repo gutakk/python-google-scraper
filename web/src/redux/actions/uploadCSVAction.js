@@ -13,8 +13,9 @@ export const onUpload = (file) => (dispatch, getState) => {
     let fr = new FileReader();
         fr.onload = (e) => {
             const keywords = (e.target.result).replace(/\n/g, ",").split(",")
-            const filterdKeywords = keywords.filter(keyword => keyword.length > 0)
-            uploadKeywords(endpoints["process_csv"], file.name, filterdKeywords).then((result => {
+            const noEmptyValueKeywords = (keywords.filter(keyword => keyword.length > 0))
+            const noDuplicateKeywords = noEmptyValueKeywords.filter((keyword, index) => noEmptyValueKeywords.indexOf(keyword) === index)
+            uploadKeywords(endpoints["process_csv"], file.name, noDuplicateKeywords).then((result => {
                 if(result.statusCode === 200) {
                     dispatch({ type: UPLOADED })
                     dispatch(fetchCSVAction())
