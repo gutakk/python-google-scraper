@@ -41,7 +41,7 @@ def scrape_data_from_google(file_id, keyword):
         finally:
             cur.close()
             cnx.close()
-    except SMTPException as e:
+    except Exception as e:
        self.retry(exc=e)
 
 
