@@ -4,7 +4,6 @@ import time
 from bs4 import BeautifulSoup
 from celery import Celery
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from utils import app, init_cnx
 
 client = Celery(app.name, broker=os.environ["CELERY_BROKER_URL"])
