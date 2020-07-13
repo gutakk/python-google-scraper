@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom'
 import "./style.scss"
 import { 
     onUpload,
-    fetchCSVAction
+    fetchCSVAction,
+    closeMoreThan100KWModal
 } from '../../redux/actions/uploadCSVAction'
 
 
@@ -18,8 +19,10 @@ class UploadCSV extends Component {
         const { 
             onUpload,
             fetchCSVAction,
+            closeMoreThan100KWModal,
             csvList,
-            isFetching
+            isFetching,
+            csvMoreThan100KW
         } = this.props
         return (
             <div id="upload-csv-container" className="d-flex flex-column align-items-center">
@@ -67,6 +70,24 @@ class UploadCSV extends Component {
                     :
                     <h2 className="text-muted">NO UPLOADED FILES</h2>
                 }
+                {
+                    csvMoreThan100KW &&
+                    <div className="modal fade show d-block" tabindex="-1" role="dialog">
+                        <div className="modal-dialog" role="document">
+                            <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">CSV Contains more than 100 keywords</h5>
+                                <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeMoreThan100KWModal}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-danger" data-dismiss="modal" onClick={closeMoreThan100KWModal}>Close</button>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
         )
     }
@@ -75,12 +96,14 @@ class UploadCSV extends Component {
 const mapStateToProps = state => ({
     csvList: state.uploadCSV.csvList,
     isFetching: state.uploadCSV.isFetching,
-    isFetchingEndpoints: state.app.isFetchingEndpoints
+    isFetchingEndpoints: state.app.isFetchingEndpoints,
+    csvMoreThan100KW: state.uploadCSV.csvMoreThan100KW
 })
   
 const mapDispatchToProps = dispatch => ({
     onUpload: (e) => dispatch(onUpload(e.target.files[0])),
     fetchCSVAction: () => dispatch(fetchCSVAction()),
+    closeMoreThan100KWModal: () => dispatch(closeMoreThan100KWModal())
 })
   
 export default connect(mapStateToProps, mapDispatchToProps)(UploadCSV)

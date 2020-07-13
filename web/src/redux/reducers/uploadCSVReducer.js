@@ -1,8 +1,9 @@
-import { CSV_FETCHED, FETCHING_CSV } from '../actions/uploadCSVAction'
+import { CSV_FETCHED, FETCHING_CSV, UPLOAD_FAILED, CLOSE_UPLOAD_FAILED_MODAL } from '../actions/uploadCSVAction'
   
 export default (state = {
     csvList: [],
-    isFetching: true
+    isFetching: true,
+    csvMoreThan100KW: false
 }, action) => {
     switch (action.type) {
         case FETCHING_CSV:
@@ -15,6 +16,16 @@ export default (state = {
                 ...state,
                 csvList: action.payload,
                 isFetching: false
+            }
+        case UPLOAD_FAILED:
+            return {
+                ...state,
+                csvMoreThan100KW: true
+            }
+        case CLOSE_UPLOAD_FAILED_MODAL:
+            return {
+                ...state,
+                csvMoreThan100KW: false
             }
         default:
             return state
