@@ -27,6 +27,7 @@ services:
       POSTGRES_PASSWORD: nimble-test
       POSTGRES_DB: nimble
       POSTGRES_HOST: db
+      SCRAPING_DELAY: 1
     ports:
       - "5000:5000"
     depends_on:
@@ -65,5 +66,6 @@ services:
       POSTGRES_PASSWORD: nimble-test
       POSTGRES_DB: nimble
       POSTGRES_HOST: db
+      SCRAPING_DELAY: 1
     depends_on:
       - db

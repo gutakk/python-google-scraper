@@ -102,8 +102,8 @@ def process_csv():
         finally:
             cur.close()
             cnx.close()
-        # for keyword in request_body["keywords"]:
-        scrape_data_from_google.apply_async(args=[file_id, "Nike"])
+        for keyword in request_body["keywords"]:
+            scrape_data_from_google.apply_async(args=[file_id, keyword])
         return "Upload Completed", 200
 
 
