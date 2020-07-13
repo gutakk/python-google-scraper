@@ -18,12 +18,12 @@ CREATE TABLE file (
 CREATE TABLE data (
     file_id TEXT NOT NULL REFERENCES file(file_id),
     keyword TEXT NOT NULL,
-    total_adword INT NOT NULL,
-    total_link INT NOT NULL,
-    total_search_result TEXT NOT NULL,
-    html_code TEXT NOT NULL,
+    total_adword INT,
+    total_link INT,
+    total_search_result TEXT,
+    html_code TEXT,
     created TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    PRIMARY KEY(file_id, keyword)
+    PRIMARY KEY(file_id)
 );
 
 CREATE INDEX ON users (email, password);
