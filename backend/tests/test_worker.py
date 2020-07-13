@@ -2,33 +2,17 @@ import os
 import unittest
 
 import psycopg2
-from app import (count_adword, count_link, generate_jwt,
-                 get_total_search_result, scrape_data_from_google,
-                 validate_jwt)
 from bs4 import BeautifulSoup
+from worker import (count_adword, count_link, get_total_search_result,
+                   scrape_data_from_google)
 
 
-class TestApp(unittest.TestCase):
+class TestWorker(unittest.TestCase):
     def setUp(self):
         self.pg_host = os.environ['POSTGRES_HOST']
         self.pg_user = os.environ['POSTGRES_USER']
         self.pg_password = os.environ['POSTGRES_PASSWORD']
         self.pg_db = os.environ['POSTGRES_DB']
-
-
-    def test_generate_jwt_should_generate_correctly(self):
-        result = generate_jwt("test@email.com")
-        assert result == b"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAZW1haWwuY29tIn0.cIR8ekgjACLB6K96qlLWx1CBtrnQw8f0MmHcErJnEV4"
-
-
-    def test_validate_jwt_should_validate_correctly_when_jwt_is_correct(self):
-        result = validate_jwt("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAZW1haWwuY29tIn0.cIR8ekgjACLB6K96qlLWx1CBtrnQw8f0MmHcErJnEV4")
-        assert result == {"email": "test@email.com"}
-
-
-    def test_validate_jwt_should_validate_failed_when_jwt_is_not_correct(self):
-        result = validate_jwt("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c")
-        assert result == 401
 
 
     def test_count_adword_should_return_count_correctly_when_no_adword(self):
