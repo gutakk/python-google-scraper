@@ -8,6 +8,7 @@ CREATE TABLE users (
 );
 
 CREATE TABLE file (
+    email TEXT NOT NULL REFERENCES users(email),
     file_id TEXT NOT NULL,
     filename TEXT NOT NULL,
     keywords INT NOT NULL,
@@ -28,4 +29,5 @@ CREATE TABLE data (
 
 CREATE INDEX ON users (email, password);
 CREATE INDEX ON file (created);
+CREATE INDEX ON file (email);
 CREATE INDEX ON data (keyword);
