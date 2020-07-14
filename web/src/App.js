@@ -28,7 +28,7 @@ class App extends React.Component {
                         <Route path='/register'>{!token ? <Register/> : <Redirect to=''/> }</Route>
                         <Route path='/login'>{!token ? <Login/> : <Redirect to=''/>}</Route>
                         <Route path='/data-report'><DataReport/></Route>
-                        <Route path='/'><UploadCSV/></Route>
+                        <Route path='/'>{token ? <UploadCSV/> : <Redirect to='/login'/>}</Route>
                         <Redirect from='*' to='/' />
                     </Switch>
                 }
