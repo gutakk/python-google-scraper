@@ -23,9 +23,25 @@ async function uploadKeywords(path, filename, keywords) {
 
 async function fetchCSV(path) {
     const url = `${process.env.REACT_APP_BACKEND_HOST}:${process.env.REACT_APP_BACKEND_PORT}${path}`
-    const response = await fetch(url)
-    const data = await response.json()
-    return data
+    const config = {
+        headers: {
+            "Authorization": localStorage.getItem('token')
+        }
+    }
+    const response = await fetch(url, config)
+    console.log(response)
+    if(response.status === 200) {
+        const data = await response.json()
+        return {
+            data: data,
+            statusCode: 200
+        }
+    }
+    else if (response.status === 401) {
+        return {
+            statusCode: 401
+        }
+    }
 }
 
 async function fetchDataReport(path, fileId) {
