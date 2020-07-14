@@ -11,7 +11,7 @@ import {
 
 class UploadCSV extends Component {
     componentDidMount() {
-        if (!this.props.isFetchingEndpoints)
+        if (!this.props.isFetchingEndpoints && localStorage.getItem("token"))
             this.props.fetchCSVAction()
     }
 

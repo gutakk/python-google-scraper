@@ -2,7 +2,7 @@ import { CSV_FETCHED, FETCHING_CSV, UPLOAD_FAILED, CLOSE_UPLOAD_FAILED_MODAL } f
   
 export default (state = {
     csvList: [],
-    isFetching: true,
+    isFetching: false,
     csvMoreThan100KW: false
 }, action) => {
     switch (action.type) {
