@@ -64,6 +64,8 @@ def login():
 
 @app.route('/csv', methods=['GET', 'POST'])
 def process_csv():
+    if validate_jwt(request.headers.get('Authorization')) == 401:
+        return "Unauthorized", 401
     if request.method == 'GET':
         cnx = init_cnx()
         cur = cnx.cursor()
@@ -87,8 +89,6 @@ def process_csv():
             cur.close()
             cnx.close()
     elif request.method == 'POST':
-        if validate_jwt(request.headers.get('Authorization')) == 401:
-            return "Unauthorized", 401
         request_body = request.json
         cnx = init_cnx()
         cur = cnx.cursor()
