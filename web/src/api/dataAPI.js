@@ -29,7 +29,6 @@ async function fetchCSV(path) {
         }
     }
     const response = await fetch(url, config)
-    console.log(response)
     if(response.status === 200) {
         const data = await response.json()
         return {

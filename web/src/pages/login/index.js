@@ -8,7 +8,7 @@ import {
     onPasswordChanged, 
     onLoginClicked
 } from '../../redux/actions/loginAction'
-
+import Header from '../../components/header'
 
 class Login extends Component {
     render() {
@@ -22,42 +22,45 @@ class Login extends Component {
             loginFailedMsg
         } = this.props
         return (
-            <div id="login-container" className="d-flex align-items-center flex-column">
-                <h2>Login</h2>
-                <form onSubmit={(e) => {e.preventDefault(); onLoginClicked()}}>
-                    <div className="form-group">
-                        <label>Email address</label>
-                        <input 
-                            type="email" 
-                            className="form-control" 
-                            id="exampleInputEmail1" 
-                            aria-describedby="emailHelp"
-                            onChange={onEmailChanged}
-                            required/>
-                    </div>
-                    <div className="form-group">
-                        <label>Password</label>
-                        <input 
-                            type="password" 
-                            className="form-control" 
-                            id="exampleInputPassword1"
-                            onChange={onPasswordChanged}
-                            required/>
-                    </div>
-                    <div id="login-error-msg-container" className="text-center text-danger font-weight-bold">
-                        { emailNotExist && <p id="login-email-exist">{emailNotExist}</p>}
-                        { loginFailedMsg && <p id="login-email-exist">{loginFailedMsg}</p>}
-                    </div>
-                    <div className="text-center">
-                        <button 
-                            type="submit" 
-                            className="btn btn-primary"
-                            disabled={!email || !password}>
-                                Login
-                        </button>
-                    </div>
-                </form>
-                <p id="sign-up-content">No account yet? <Link id="sign-up" to="/register" className="font-weight-bold">Sign up for free!</Link></p>
+            <div>
+                <Header showLoginLogoutButton={false} showBackButton={true} backPath="/"/>
+                <div id="login-container" className="d-flex align-items-center flex-column">
+                    <h2>Login</h2>
+                    <form onSubmit={(e) => {e.preventDefault(); onLoginClicked()}}>
+                        <div className="form-group">
+                            <label>Email address</label>
+                            <input 
+                                type="email" 
+                                className="form-control" 
+                                id="exampleInputEmail1" 
+                                aria-describedby="emailHelp"
+                                onChange={onEmailChanged}
+                                required/>
+                        </div>
+                        <div className="form-group">
+                            <label>Password</label>
+                            <input 
+                                type="password" 
+                                className="form-control" 
+                                id="exampleInputPassword1"
+                                onChange={onPasswordChanged}
+                                required/>
+                        </div>
+                        <div id="login-error-msg-container" className="text-center text-danger font-weight-bold">
+                            { emailNotExist && <p id="login-email-exist">{emailNotExist}</p>}
+                            { loginFailedMsg && <p id="login-email-exist">{loginFailedMsg}</p>}
+                        </div>
+                        <div className="text-center">
+                            <button 
+                                type="submit" 
+                                className="btn btn-primary"
+                                disabled={!email || !password}>
+                                    Login
+                            </button>
+                        </div>
+                    </form>
+                    <p id="sign-up-content">No account yet? <Link id="sign-up" to="/register" className="font-weight-bold">Sign up for free!</Link></p>
+                </div>
             </div>
         )
     }
