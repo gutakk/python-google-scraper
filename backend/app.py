@@ -85,7 +85,7 @@ def process_csv():
                 FROM file f 
                 WHERE user_id=%s
                 ORDER BY created DESC;
-            """, [1])
+            """, [token_result["sub"]])
             result = cur.fetchall()
             return jsonify(result), 200
         except Exception as e:
@@ -99,9 +99,12 @@ def process_csv():
         cnx = init_cnx()
         cur = cnx.cursor()
         try:
-            file_id = str(uuid.uuid4())
-            cur.execute("INSERT INTO file (email, file_id, filename, keywords) VALUES (%s, %s, %s, %s)", [token_result["email"], file_id, request_body["filename"], len(request_body["keywords"])])
+            cur.execute("""
+                INSERT INTO file (user_id, filename, keywords) VALUES (%s, %s, %s)
+                RETURNING id;
+            """, [token_result["sub"], request_body["filename"], len(request_body["keywords"])])
             cnx.commit()
+            result = cur.fetchone()
         except Exception as e:
             cnx.rollback()
             raise(e)
@@ -109,7 +112,7 @@ def process_csv():
             cur.close()
             cnx.close()
         for keyword in request_body["keywords"]:
-            scrape_data_from_google.apply_async(args=[file_id, keyword])
+            scrape_data_from_google.apply_async(args=[result[0], keyword])
         return "Upload Completed", 200
 
 
