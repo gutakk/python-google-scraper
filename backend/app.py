@@ -75,15 +75,15 @@ def process_csv():
             file_id = str(uuid.uuid4())
             cur.execute("""
                 SELECT 
-                    file_id, 
+                    id, 
                     filename, 
                     keywords,
                     created,
-                    (SELECT COUNT(*) >= f.keywords FROM data WHERE file_id=f.file_id) AS status
+                    (SELECT COUNT(*) >= f.keywords FROM data WHERE id=f.id) AS status
                 FROM file f 
-                WHERE email=%s
+                WHERE user_id=%s
                 ORDER BY created DESC;
-            """, [token_result["email"]])
+            """, [1])
             result = cur.fetchall()
             return jsonify(result), 200
         except Exception as e:
