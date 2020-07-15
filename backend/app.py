@@ -64,6 +64,10 @@ def login():
 
 @app.route('/csv', methods=['GET', 'POST'])
 def process_csv():
+    token_result = validate_jwt(request.headers.get('Authorization'))
+    if token_result == 401:
+        return "Unauthorized", 401
+
     if request.method == 'GET':
         cnx = init_cnx()
         cur = cnx.cursor()
@@ -73,11 +77,13 @@ def process_csv():
                 SELECT 
                     file_id, 
                     filename, 
-                    keywords, 
+                    keywords,
                     created,
                     (SELECT COUNT(*) >= f.keywords FROM data WHERE file_id=f.file_id) AS status
-                FROM file f ORDER BY created DESC;
-            """)
+                FROM file f 
+                WHERE email=%s
+                ORDER BY created DESC;
+            """, [token_result["email"]])
             result = cur.fetchall()
             return jsonify(result), 200
         except Exception as e:
@@ -87,14 +93,12 @@ def process_csv():
             cur.close()
             cnx.close()
     elif request.method == 'POST':
-        if validate_jwt(request.headers.get('Authorization')) == 401:
-            return "Unauthorized", 401
         request_body = request.json
         cnx = init_cnx()
         cur = cnx.cursor()
         try:
             file_id = str(uuid.uuid4())
-            cur.execute("INSERT INTO file (file_id, filename, keywords) VALUES (%s, %s, %s)", [file_id, request_body["filename"], len(request_body["keywords"])])
+            cur.execute("INSERT INTO file (email, file_id, filename, keywords) VALUES (%s, %s, %s, %s)", [token_result["email"], file_id, request_body["filename"], len(request_body["keywords"])])
             cnx.commit()
         except Exception as e:
             cnx.rollback()

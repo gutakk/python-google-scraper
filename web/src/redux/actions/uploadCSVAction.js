@@ -4,7 +4,7 @@ export const CSV_FETCHED = 'uploadCSV/CSV_FETCHED'
 export const FETCHING_CSV = 'uploadCSV/FETCHING_CSV'
 export const UPLOADING = 'uploadCSV/UPLOADING'
 export const UPLOADED = 'uploadCSV/UPLOADED'
-export const UPLOAD_UNAUTHORIZED = 'uploadCSV/UPLOAD_UNAUTHORIZED'
+export const UNAUTHORIZED = 'uploadCSV/UNAUTHORIZED'
 export const UPLOAD_FAILED = 'uploadCSV/UPLOAD_FAILED'
 export const CLOSE_UPLOAD_FAILED_MODAL = 'uploadCSV/CLOSE_UPLOAD_FAILED_MODAL'
 
@@ -27,9 +27,7 @@ export const onUpload = (file) => (dispatch, getState) => {
                         dispatch(fetchCSVAction())
                     }
                     else if(result.statusCode === 401) {
-                        dispatch({ type: UPLOAD_UNAUTHORIZED })
-                        localStorage.removeItem('token')
-                        window.location.href = "/login"
+                        removeTokenWhenUnauthorized(dispatch)
                     }
                 }))
             }
@@ -44,21 +42,32 @@ export const fetchCSVAction = () => (dispatch, getState) => {
         payload: true
      })
     fetchCSV(endpoints["process_csv"]).then(result => {
-        let csvList = []
-        result.map(csv => {
-            csvList.push({
-                fileId: csv[0],
-                filename: csv[1],
-                keywords: csv[2],
-                created: csv[3],
-                status: csv[4]
+        if(result.statusCode === 200) {
+            let csvList = []
+            result["data"].map(csv => {
+                csvList.push({
+                    fileId: csv[0],
+                    filename: csv[1],
+                    keywords: csv[2],
+                    created: csv[3],
+                    status: csv[4]
+                })
             })
-        })
-        dispatch({
-            type: CSV_FETCHED,
-            payload: csvList
-        })
+            dispatch({
+                type: CSV_FETCHED,
+                payload: csvList
+            })
+        }
+        else if(result.statusCode === 401) {
+            removeTokenWhenUnauthorized(dispatch)
+        }
     })
+}
+
+const removeTokenWhenUnauthorized = (dispatch) => {
+    dispatch({ type: UNAUTHORIZED })
+    localStorage.removeItem('token')
+    window.location.href = "/login"
 }
 
 export const closeMoreThan100KWModal = () => dispatch => {
