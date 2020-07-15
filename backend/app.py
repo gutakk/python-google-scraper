@@ -30,10 +30,12 @@ def user():
                 return "Email already exist", 400
             cur.execute("""
                 INSERT INTO users (email, password)
-                VALUES (%s, crypt(%s, gen_salt('bf')));
+                VALUES (%s, crypt(%s, gen_salt('bf')))
+                RETURNING id;
             """, [request_body['email'], request_body['password']])
             cnx.commit()
-            return generate_jwt(request_body['email']), 201
+            result = cur.fetchone()
+            return generate_jwt(result[0]), 201
         except Exception as e:
             cnx.rollback()
             raise(e)
@@ -49,11 +51,11 @@ def login():
         cnx = init_cnx()
         cur = cnx.cursor()
         try:
-            cur.execute("SELECT * FROM users WHERE email=%s AND password=crypt(%s, password);", [request_body['email'], request_body['password']])
+            cur.execute("SELECT id FROM users WHERE email=%s AND password=crypt(%s, password);", [request_body['email'], request_body['password']])
             result = cur.fetchone()
             if not result:
                 return "Email or Password incorrect", 400
-            return generate_jwt(request_body['email']), 200
+            return generate_jwt(result[0]), 200
         except Exception as e:
             cnx.rollback()
             raise(e)

@@ -17,8 +17,8 @@ def init_cnx():
     return psycopg2.connect(dbname=pg_db, user=pg_user, password=pg_password, host=pg_host)
 
 
-def generate_jwt(email):
-    return jwt.encode({'email': email}, os.environ['JWT_SECRET'], algorithm='HS256')
+def generate_jwt(user_id):
+    return jwt.encode({'sub': user_id}, os.environ['JWT_SECRET'], algorithm='HS256')
 
 
 def validate_jwt(token):
