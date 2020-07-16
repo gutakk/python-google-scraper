@@ -1,7 +1,10 @@
+import views.data
+import views.file
+import views.index
+import views.user
 from database import init_db
 from flask_cors import CORS
 from utils import app
-import views
 
 CORS(app)
 
