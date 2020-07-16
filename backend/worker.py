@@ -4,9 +4,9 @@ import time
 from bs4 import BeautifulSoup
 from celery import Celery
 from database import db_session
-from models import Data
+from models.data import Data
 from selenium import webdriver
-from utils import app, init_cnx
+from utils import app
 
 client = Celery(app.name, broker=os.environ["CELERY_BROKER_URL"])
 client.conf.update(app.config)
