@@ -5,16 +5,8 @@ import jwt
 import psycopg2
 from flask import Flask
 
-pg_host = os.environ['POSTGRES_HOST']
-pg_user = os.environ['POSTGRES_USER']
-pg_password = os.environ['POSTGRES_PASSWORD']
-pg_db = os.environ['POSTGRES_DB']
 
 app = Flask(__name__)
-
-
-def init_cnx():
-    return psycopg2.connect(dbname=pg_db, user=pg_user, password=pg_password, host=pg_host)
 
 
 def generate_jwt(user_id):

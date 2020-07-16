@@ -7,7 +7,7 @@ from database import db_session, init_db, engine
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from models import Data, File, User
-from utils import app, generate_jwt, init_cnx, validate_jwt
+from utils import app, generate_jwt, validate_jwt
 from worker import scrape_data_from_google
 from sqlalchemy.sql import func
 

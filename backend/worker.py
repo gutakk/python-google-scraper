@@ -3,6 +3,8 @@ import time
 
 from bs4 import BeautifulSoup
 from celery import Celery
+from database import db_session
+from models import Data
 from selenium import webdriver
 from utils import app, init_cnx
 
@@ -30,20 +32,16 @@ def scrape_data_from_google(file_id, keyword):
     finally:
         driver.close()
 
-    cnx = init_cnx()
-    cur = cnx.cursor()
-    try:
-        cur.execute("""
-            INSERT INTO data (file_id, keyword, total_adword, total_link, total_search_result, html_code)
-            VALUES (%s, %s, %s, %s, %s, %s);
-        """, [file_id, keyword, total_adword, total_link, total_search_result, soup.prettify()])
-        cnx.commit()
-    except Exception as e:
-        cnx.rollback()
-        raise(e)
-    finally:
-        cur.close()
-        cnx.close()
+    new_data = Data(
+        file_id = file_id,
+        keyword = keyword,
+        total_adword = total_adword,
+        total_link = total_link,
+        total_search_result = total_search_result,
+        html_code = soup.prettify()
+    )
+    db_session.add(new_data)
+    db_session.commit()
     time.sleep(int(os.environ["SCRAPING_DELAY"]))
 
 
