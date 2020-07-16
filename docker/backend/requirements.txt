@@ -7,3 +7,6 @@ redis==3.3.11
 beautifulsoup4
 selenium
 pytest
+SQLAlchemy
+Flask-SQLAlchemy
+bcrypt

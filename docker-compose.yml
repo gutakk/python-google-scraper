@@ -35,9 +35,7 @@ services:
 
   db:
     container_name: db
-    build:
-      context: ./
-      dockerfile: ./docker/db/Dockerfile
+    image: postgres:11
     environment:
       POSTGRES_USER: nimble
       POSTGRES_PASSWORD: nimble-test

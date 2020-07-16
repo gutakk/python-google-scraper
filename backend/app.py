@@ -1,10 +1,15 @@
 import time
 import uuid
 
+import bcrypt
+
+from database import db_session, init_db, engine
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from models import Data, File, User
 from utils import app, generate_jwt, init_cnx, validate_jwt
 from worker import scrape_data_from_google
+from sqlalchemy.sql import func
 
 CORS(app)
 
@@ -21,47 +26,35 @@ def index():
 def user():
     if request.method == 'POST':
         request_body = request.json
-        cnx = init_cnx()
-        cur = cnx.cursor()
-        try:
-            cur.execute("SELECT * FROM users WHERE email=%s", [request_body['email']])
-            result = cur.fetchone()
-            if result:
-                return "Email already exist", 400
-            cur.execute("""
-                INSERT INTO users (email, password)
-                VALUES (%s, crypt(%s, gen_salt('bf')))
-                RETURNING id;
-            """, [request_body['email'], request_body['password']])
-            cnx.commit()
-            result = cur.fetchone()
-            return generate_jwt(result[0]), 201
-        except Exception as e:
-            cnx.rollback()
-            raise(e)
-        finally:
-            cur.close()
-            cnx.close()
+        result = User.query.with_entities(
+            User.id
+        ).filter(
+            User.email == request_body["email"]
+        ).first()
+        if result:
+            return "Email already exist", 400
+        new_user = User(
+            email = request_body["email"],
+            password = bcrypt.hashpw(request_body["password"].encode("utf-8"), bcrypt.gensalt())
+        )
+        db_session.add(new_user)
+        db_session.commit()
+        return generate_jwt(new_user.id), 201
 
 
 @app.route('/login', methods=['POST'])
 def login():
     if request.method == 'POST':
         request_body = request.json
-        cnx = init_cnx()
-        cur = cnx.cursor()
-        try:
-            cur.execute("SELECT id FROM users WHERE email=%s AND password=crypt(%s, password);", [request_body['email'], request_body['password']])
-            result = cur.fetchone()
-            if not result:
-                return "Email or Password incorrect", 400
-            return generate_jwt(result[0]), 200
-        except Exception as e:
-            cnx.rollback()
-            raise(e)
-        finally:
-            cur.close()
-            cnx.close()
+        result = User.query.with_entities(
+            User.id
+        ).filter(
+            User.email == request_body["email"] and User.password == bcrypt.hashpw(request_body["password"].encode("utf-8"), bcrypt.gensalt())
+        ).first()
+        if not result:
+            return "Email or Password incorrect", 400
+        return generate_jwt(result[0]), 200
+
 
 
 @app.route('/csv', methods=['GET', 'POST'])
@@ -71,86 +64,58 @@ def process_csv():
         return "Unauthorized", 401
 
     if request.method == 'GET':
-        cnx = init_cnx()
-        cur = cnx.cursor()
-        try:
-            file_id = str(uuid.uuid4())
-            cur.execute("""
+        result = engine.execute("""
                 SELECT 
                     id, 
                     filename, 
                     keywords,
                     created,
-                    (SELECT COUNT(*) >= f.keywords FROM data WHERE id=f.id) AS status
+                    (SELECT COUNT(*) >= f.keywords FROM data WHERE file_id=f.id) AS status
                 FROM file f 
                 WHERE user_id=%s
                 ORDER BY created DESC;
             """, [token_result["sub"]])
-            result = cur.fetchall()
-            return jsonify(result), 200
-        except Exception as e:
-            cnx.rollback()
-            raise(e)
-        finally:
-            cur.close()
-            cnx.close()
+        return jsonify([list(row) for row in result]), 200
     elif request.method == 'POST':
         request_body = request.json
-        cnx = init_cnx()
-        cur = cnx.cursor()
-        try:
-            cur.execute("""
-                INSERT INTO file (user_id, filename, keywords) VALUES (%s, %s, %s)
-                RETURNING id;
-            """, [token_result["sub"], request_body["filename"], len(request_body["keywords"])])
-            cnx.commit()
-            result = cur.fetchone()
-        except Exception as e:
-            cnx.rollback()
-            raise(e)
-        finally:
-            cur.close()
-            cnx.close()
+        new_file = File(
+            user_id = token_result["sub"],
+            filename = request_body["filename"],
+            keywords = len(request_body["keywords"])
+        )
+        db_session.add(new_file)
+        db_session.commit()
         for keyword in request_body["keywords"]:
-            scrape_data_from_google.apply_async(args=[result[0], keyword])
+            scrape_data_from_google.apply_async(args=[new_file.id, keyword])
         return "Upload Completed", 200
 
 
 @app.route('/data-report/<file_id>', methods=['GET'])
 def data_report(file_id):
     if request.method == 'GET':
-        cnx = init_cnx()
-        cur = cnx.cursor()
-        try:
-            cur.execute("SELECT keyword, total_adword, total_link, total_search_result, file_id FROM data WHERE file_id=%s ORDER BY keyword ASC;", [file_id])
-            result = cur.fetchall()
-            return jsonify(result), 200
-        except Exception as e:
-            cnx.rollback()
-            raise(e)
-        finally:
-            cur.close()
-            cnx.close()
+        result = Data.query.with_entities(
+            Data.keyword,
+            Data.total_adword,
+            Data.total_link,
+            Data.total_search_result,
+            Data.file_id
+        ).filter(
+            Data.file_id == file_id
+        ).all()
+        return jsonify(result), 200
 
 
 @app.route('/html-code/<file_id>/<keyword>', methods=['GET'])
 def html_code(file_id, keyword):
     if request.method == 'GET':
-        cnx = init_cnx()
-        cur = cnx.cursor()
-        try:
-            app.logger.info(file_id)
-            cur.execute("SELECT html_code FROM data WHERE file_id=%s AND keyword=%s;", [file_id, keyword])
-            result = cur.fetchone()
-            app.logger.info(jsonify(result[0]))
-            return jsonify(result[0]), 200
-        except Exception as e:
-            cnx.rollback()
-            raise(e)
-        finally:
-            cur.close()
-            cnx.close()
+        result = Data.query.with_entities(
+            Data.html_code
+        ).filter(
+            Data.file_id == file_id and Data.keyword == keyword
+        ).first()
+        return jsonify(result[0]), 200
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    init_db()
+    app.run(host='0.0.0.0', debug=True)
