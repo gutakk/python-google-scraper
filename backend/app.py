@@ -1,9 +1,9 @@
 import time
 
-import views.data
-import views.file
-import views.index
-import views.user
+import controllers.data
+import controllers.file
+import controllers.index
+import controllers.user
 from database import init_db
 from flask_cors import CORS
 from utils import app
