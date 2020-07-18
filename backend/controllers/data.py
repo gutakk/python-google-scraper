@@ -15,7 +15,9 @@ def data_report(file_id):
         ).filter(
             Data.file_id == file_id
         ).all()
-        return jsonify(result), 200
+        if result:
+            return jsonify(result), 200
+        return "Not Found", 404
 
 
 @app.route('/html-code/<file_id>/<keyword>', methods=['GET'])
@@ -26,4 +28,6 @@ def html_code(file_id, keyword):
         ).filter(
             Data.file_id == file_id and Data.keyword == keyword
         ).first()
-        return jsonify(result[0]), 200
+        if result:
+            return jsonify(result[0]), 200
+        return "Not Found", 404
