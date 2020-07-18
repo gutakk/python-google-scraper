@@ -26,7 +26,8 @@ def html_code(file_id, keyword):
         result = Data.query.with_entities(
             Data.html_code
         ).filter(
-            Data.file_id == file_id and Data.keyword == keyword
+            Data.file_id == file_id,
+            Data.keyword == keyword
         ).first()
         if result:
             return jsonify(result[0]), 200
