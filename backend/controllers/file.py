@@ -23,7 +23,10 @@ def process_csv():
                 WHERE user_id=%s
                 ORDER BY created DESC;
             """, [token_result["sub"]])
-        return jsonify([list(row) for row in result]), 200
+        converted_result = [list(row) for row in result]
+        if converted_result:
+            return jsonify(converted_result), 200
+        return "Not Found", 404
     elif request.method == 'POST':
         request_body = request.json
         new_file = File(
