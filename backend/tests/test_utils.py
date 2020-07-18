@@ -6,7 +6,7 @@ from utils import generate_jwt, validate_jwt
 class TestUtils(unittest.TestCase):
     def test_generate_jwt_should_generate_correctly(self):
         result = generate_jwt("test@email.com")
-        assert result == b"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAZW1haWwuY29tIn0.cIR8ekgjACLB6K96qlLWx1CBtrnQw8f0MmHcErJnEV4"
+        assert result == b"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QGVtYWlsLmNvbSJ9.LoWRlX0n5tcoif-uvhodG52GXF4ZTSYPZezT3dj7BTU"
 
 
     def test_validate_jwt_should_validate_correctly_when_jwt_is_correct(self):
