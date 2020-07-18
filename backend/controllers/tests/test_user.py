@@ -7,6 +7,7 @@ import jwt
 from models.user import User
 from tests import NimbleBaseTestCase
 from utils import app
+from werkzeug.security import generate_password_hash
 
 
 class TestUser(NimbleBaseTestCase):
@@ -17,7 +18,7 @@ class TestUser(NimbleBaseTestCase):
 
         self.new_user = User(
             email = self.email,
-            password = self.password
+            password = generate_password_hash(self.password, method='sha256')
         )
         self.db_session.add(self.new_user)
         self.db_session.commit()
@@ -75,7 +76,7 @@ class TestUser(NimbleBaseTestCase):
             assert result.status_code == 400
 
 
-    def test_login_should_return_200_when_password_incorrect(self):
+    def test_login_should_return_200_when_login_successfully(self):
         body = {
             "email": self.email,
             "password": self.password
