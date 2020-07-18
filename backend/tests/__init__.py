@@ -2,9 +2,12 @@ import os
 import time
 import unittest
 
+import controllers.data
+import controllers.file
+import controllers.index
+import controllers.user
 import psycopg2
 from database import init_db
-from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -18,12 +21,8 @@ class NimbleBaseTestCase(unittest.TestCase):
         self.pg_password = os.environ['POSTGRES_PASSWORD']
         self.pg_db = os.environ['POSTGRES_DB']
 
-        self.cnx = psycopg2.connect(user=self.pg_user, password=self.pg_password, host=self.pg_host)
+        self.cnx = psycopg2.connect(dbname=self.pg_db, user=self.pg_user, password=self.pg_password, host=self.pg_host)
         self.cur = self.cnx.cursor()
-        self.cnx.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-
-        self.cur.execute("CREATE DATABASE {db_name};".format(db_name=self.pg_db))
-        self.cnx.commit()
 
         self.engine = create_engine(
             f'postgresql://{os.environ["POSTGRES_USER"]}:{os.environ["POSTGRES_PASSWORD"]}@{os.environ["POSTGRES_HOST"]}:5432/{os.environ["POSTGRES_DB"]}', 
@@ -40,12 +39,13 @@ class NimbleBaseTestCase(unittest.TestCase):
 
     def tearDown(self):
         self.cur.execute("""
-            SELECT pg_terminate_backend(pid)
-            FROM pg_stat_activity
-            WHERE datname = %s;
-        """, [self.pg_db])
-
-        self.cur.execute("DROP DATABASE {db_name};".format(db_name=self.pg_db))
-
+            DELETE FROM data;
+            DELETE FROM file;
+            DELETE FROM users;
+        """)
+        self.cnx.commit()
         self.cur.close()
         self.cnx.close()
+
+        self.db_session.close()
+        self.engine.dispose()
