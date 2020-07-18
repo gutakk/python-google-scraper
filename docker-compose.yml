@@ -20,6 +20,7 @@ services:
     command: "python3 /usr/src/app.py"
     volumes:
       - "./backend:/usr/src"
+    restart: on-failure
     environment:
       CELERY_BROKER_URL: redis://redis:6379/0
       JWT_SECRET: nimble-secret

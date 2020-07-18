@@ -14,9 +14,9 @@ db_session = scoped_session(sessionmaker(autocommit=False,
 Base = declarative_base()
 Base.query = db_session.query_property()
 
-def init_db():
+def init_db(e):
     import models.data
     import models.file
     import models.user
     
-    Base.metadata.create_all(bind=engine)
+    Base.metadata.create_all(bind=e)
