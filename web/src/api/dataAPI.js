@@ -41,6 +41,11 @@ async function fetchCSV(path) {
             statusCode: 401
         }
     }
+    else if (response.status === 404) {
+        return {
+            statusCode: 404
+        }
+    }
 }
 
 async function fetchDataReport(path, fileId) {

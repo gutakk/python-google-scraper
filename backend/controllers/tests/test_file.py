@@ -40,13 +40,13 @@ class TestFile(NimbleBaseTestCase):
         self.db_session.commit()
 
     
-    def test_get_csv_should_return_401_if_no_autorization_headers(self):
+    def test_process_csv_should_return_401_if_no_autorization_headers(self):
         with app.test_client() as client:
             result = client.get('/csv')
             assert result.status_code == 401
 
 
-    def test_get_csv_should_return_401_if_wrong_authorization(self):
+    def test_process_csv_should_return_401_if_wrong_authorization(self):
         token = jwt.encode({'sub': self.user_id}, "wrong_secret", algorithm='HS256')
         with app.test_client() as client:
             result = client.get(
@@ -115,3 +115,24 @@ class TestFile(NimbleBaseTestCase):
                 [self.file_id, self.filename, self.keywords, ANY, True]
             ]
             assert json.loads(result.data) == expected_result
+
+
+    def test_post_csv_should_return_200_when_correct_authorization(self):
+        self.cur.execute("""
+            DELETE FROM data;
+            DELETE FROM file;
+        """)
+        self.cnx.commit()
+
+        token = generate_jwt(self.user_id)
+        body = {
+            "filename": self.filename,
+            "keywords": [1, 2, 3, 4]
+        }
+        with app.test_client() as client:
+            result = client.post(
+                '/csv',
+                headers={"Authorization": token},
+                json=body
+            )
+            assert result.status_code == 200
