@@ -9,4 +9,4 @@ selenium
 pytest
 SQLAlchemy
 Flask-SQLAlchemy
-bcrypt
+Werkzeug
