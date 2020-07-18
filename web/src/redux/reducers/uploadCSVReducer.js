@@ -1,4 +1,4 @@
-import { CSV_FETCHED, FETCHING_CSV, UPLOAD_FAILED, CLOSE_UPLOAD_FAILED_MODAL } from '../actions/uploadCSVAction'
+import { CSV_FETCHED, CSV_FETCHED_NOT_FOUND, FETCHING_CSV, UPLOAD_FAILED, CLOSE_UPLOAD_FAILED_MODAL } from '../actions/uploadCSVAction'
   
 export default (state = {
     csvList: [],
@@ -15,6 +15,11 @@ export default (state = {
             return {
                 ...state,
                 csvList: action.payload,
+                isFetching: false
+            }
+        case CSV_FETCHED_NOT_FOUND:
+            return {
+                ...state,
                 isFetching: false
             }
         case UPLOAD_FAILED:
