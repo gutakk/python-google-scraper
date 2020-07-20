@@ -1,6 +1,7 @@
 import { uploadKeywords, fetchCSV } from '../../api/dataAPI'
 
 export const CSV_FETCHED = 'uploadCSV/CSV_FETCHED'
+export const CSV_FETCHED_NOT_FOUND = 'uploadCSV/CSV_FETCHED_NOT_FOUND'
 export const FETCHING_CSV = 'uploadCSV/FETCHING_CSV'
 export const UPLOADING = 'uploadCSV/UPLOADING'
 export const UPLOADED = 'uploadCSV/UPLOADED'
@@ -60,6 +61,11 @@ export const fetchCSVAction = () => (dispatch, getState) => {
         }
         else if(result.statusCode === 401) {
             removeTokenWhenUnauthorized(dispatch)
+        }
+        else if(result.statusCode === 404) {
+            dispatch({
+                type: CSV_FETCHED_NOT_FOUND
+            })
         }
     })
 }

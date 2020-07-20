@@ -1,18 +1,62 @@
+import json
 import os
 import unittest
 
-import psycopg2
 from bs4 import BeautifulSoup
+from models.data import Data
+from models.file import File
+from models.user import User
+from tests import NimbleBaseTestCase
 from worker import (count_adword, count_link, get_total_search_result,
-                   scrape_data_from_google)
+                    scrape_data_from_google)
 
 
-class TestWorker(unittest.TestCase):
+class TestWorker(NimbleBaseTestCase):
     def setUp(self):
-        self.pg_host = os.environ['POSTGRES_HOST']
-        self.pg_user = os.environ['POSTGRES_USER']
-        self.pg_password = os.environ['POSTGRES_PASSWORD']
-        self.pg_db = os.environ['POSTGRES_DB']
+        super().setUp()
+        self.user_id = 1
+        self.email = "test@e.c"
+        self.password = "1234"
+
+        self.file_id = 1
+        self.filename = "test-file.csv"
+        self.keywords = 1
+
+        self.data_id = 1
+        self.keyword = "test-keyword"
+        self.total_adword = 1
+        self.total_link = 1
+        self.total_search_result = "about 1,000"
+        self.html_code = "test-html-code"
+
+        self.new_user = User(
+            id = self.user_id,
+            email = self.email,
+            password = self.password
+        )
+        self.db_session.add(self.new_user)
+        self.db_session.commit()
+
+        self.new_file = File(
+            user_id = self.user_id,
+            id = self.file_id,
+            filename = self.filename,
+            keywords = self.keywords
+        )
+        self.db_session.add(self.new_file)
+        self.db_session.commit()
+
+        # self.new_data = Data(
+        #     file_id = self.file_id,
+        #     id = self.data_id,
+        #     keyword = self.keyword,
+        #     total_adword = self.total_adword,
+        #     total_link = self.total_link,
+        #     total_search_result = self.total_search_result,
+        #     html_code = self.html_code
+        # )
+        # self.db_session.add(self.new_data)
+        # self.db_session.commit()
 
 
     def test_count_adword_should_return_count_correctly_when_no_adword(self):
@@ -140,71 +184,37 @@ class TestWorker(unittest.TestCase):
         assert result == None
 
 
-    def test_scrape_data_from_google_should_insert_data_correctly_when_has_no_keyword(self):
-        cnx = psycopg2.connect(dbname=self.pg_db, user=self.pg_user, password=self.pg_password, host=self.pg_host)
-        cur = cnx.cursor()
-        try:
-            file_id = "file-id-1"
-            filename = "test-file.csv"
-            cur.execute("INSERT INTO file (file_id, filename, keywords) VALUES (%s, %s, %s)", [file_id, filename, 1])
-            cnx.commit()
-            cur.execute("SELECT file_id, keyword FROM data WHERE file_id=%s;", [file_id])
-            result = cur.fetchall()
-            assert result == []
-            cur.execute("DELETE FROM data WHERE file_id=%s;", [file_id])
-            cur.execute("DELETE FROM file WHERE file_id=%s;", [file_id])
-            cnx.commit()
-        except Exception as e:
-            cnx.rollback()
-            raise(e)
-        finally:
-            cur.close()
-            cnx.close()   
+    def test_scrape_data_from_google_should_insert_data_correctly_when_has_no_keyword(self): 
+        result = Data.query.with_entities(
+            Data.file_id,
+            Data.keyword
+        ).filter(
+            Data.file_id == self.file_id
+        ).all()
+        assert result == []
 
     
     def test_scrape_data_from_google_should_insert_data_correctly_when_has_one_keyword(self):
-        cnx = psycopg2.connect(dbname=self.pg_db, user=self.pg_user, password=self.pg_password, host=self.pg_host)
-        cur = cnx.cursor()
-        try:
-            file_id = "file-id-1"
-            filename = "test-file.csv"
-            cur.execute("INSERT INTO file (file_id, filename, keywords) VALUES (%s, %s, %s)", [file_id, filename, 1])
-            cnx.commit()
-            scrape_data_from_google(file_id, "hello world")
-            cur.execute("SELECT file_id, keyword FROM data WHERE file_id=%s;", [file_id])
-            result = cur.fetchall()
-            assert result == [(file_id, "hello world")]
-            cur.execute("DELETE FROM data WHERE file_id=%s;", [file_id])
-            cur.execute("DELETE FROM file WHERE file_id=%s;", [file_id])
-            cnx.commit()
-        except Exception as e:
-            cnx.rollback()
-            raise(e)
-        finally:
-            cur.close()
-            cnx.close()
+        scrape_data_from_google(self.file_id, "hello world")
+        result = Data.query.with_entities(
+            Data.file_id,
+            Data.keyword
+        ).filter(
+            Data.file_id == self.file_id
+        ).all()
+        assert result == [(self.file_id, "hello world")]
         
 
     def test_scrape_data_from_google_should_insert_data_correctly_when_has_more_than_one_keyword(self):
-        cnx = psycopg2.connect(dbname=self.pg_db, user=self.pg_user, password=self.pg_password, host=self.pg_host)
-        cur = cnx.cursor()
-        try:
-            file_id = "file-id-1"
-            filename = "test-file.csv"
-            cur.execute("INSERT INTO file (file_id, filename, keywords) VALUES (%s, %s, %s)", [file_id, filename, 1])
-            cnx.commit()
-            scrape_data_from_google(file_id, "hello world")
-            scrape_data_from_google(file_id, "acer")
-            scrape_data_from_google(file_id, "dell")
-            cur.execute("SELECT file_id, keyword FROM data WHERE file_id=%s ORDER BY keyword ASC;", [file_id])
-            result = cur.fetchall()
-            assert result == [(file_id, "acer"), (file_id, "dell"), (file_id, "hello world")]
-            cur.execute("DELETE FROM data WHERE file_id=%s;", [file_id])
-            cur.execute("DELETE FROM file WHERE file_id=%s;", [file_id])
-            cnx.commit()
-        except Exception as e:
-            cnx.rollback()
-            raise(e)
-        finally:
-            cur.close()
-            cnx.close()    
+        scrape_data_from_google(self.file_id, "hello world")
+        scrape_data_from_google(self.file_id, "acer")
+        scrape_data_from_google(self.file_id, "dell")
+        result = Data.query.with_entities(
+            Data.file_id,
+            Data.keyword
+        ).filter(
+            Data.file_id == self.file_id
+        ).order_by(
+            Data.keyword.asc()
+        ).all()
+        assert result == [(self.file_id, "acer"), (self.file_id, "dell"), (self.file_id, "hello world")]

@@ -11,5 +11,5 @@ In this project I'd used tech stack as following
 - Docker Compose
 
 ### One-command to start app (need to install required tools first)
-    docker-compose up -d
+    make reset
 You will be able to access to web by using `localhost:3000`
