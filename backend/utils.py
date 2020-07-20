@@ -4,7 +4,7 @@ import jwt
 
 import psycopg2
 from flask import Flask
-
+from models.user import User
 
 app = Flask(__name__)
 
@@ -18,3 +18,12 @@ def validate_jwt(token):
         return jwt.decode(token, os.environ['JWT_SECRET'], algorithms=["HS256"], verify=True)
     except Exception as e:
         return 401
+
+
+def find_user(user_id):
+    result = User.query.filter(
+        User.id == user_id
+    ).first()
+    if result:
+        return True
+    return False

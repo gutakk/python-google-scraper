@@ -1,7 +1,7 @@
 from database import db_session, engine
 from flask import jsonify, request
 from models.file import File
-from utils import app, validate_jwt
+from utils import app, find_user, validate_jwt
 from worker import scrape_data_from_google
 
 
@@ -28,6 +28,8 @@ def process_csv():
             return jsonify(converted_result), 200
         return "Not Found", 404
     elif request.method == 'POST':
+        if not find_user(token_result['sub']):
+            return "Unauthorized", 401
         request_body = request.json
         new_file = File(
             user_id = token_result["sub"],
