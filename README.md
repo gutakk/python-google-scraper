@@ -1,7 +1,7 @@
 # Nimble Web Developer Test
 This project is created for apply job at Nimble only.
 In this project I'd used tech stack as following
-- React, Redux Thunk, Bootstrap for frontend and just for unit testing
+- React, Redux Thunk, Bootstrap for frontend and jest for unit testing
 - Python (Flask, Psycopg) for backend and pytest for unit testing
 - PostgreSQL for database
 - Docker for environment control
